@@ -12,10 +12,10 @@ const MainComponent = (): JSX.Element => {
     <>
       <Header />
       <div className={`${styles.slides} z-[1]`} ref={divRefCallback}>
+        <Section.GateSection />
         <Section.IntroSection />
-        <Section.BlueSection />
-        <Section.WhiteSection />
-        <Section.RedSection />
+        <Section.CareerSection />
+        <Section.ProjectSection />
         <Section.SkillSection />
       </div>
     </>

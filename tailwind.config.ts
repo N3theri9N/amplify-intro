@@ -26,11 +26,11 @@ const config: Config = {
           to: { opacity: "0" },
         },
         goRight: {
-          from: { transform: "translateX(10%)" },
+          from: { transform: "translateX(15%)" },
           to: { transform: "translateX(0%)" },
         },
         goLeft: {
-          from: { transform: "translateX(-10%)" },
+          from: { transform: "translateX(-15%)" },
           to: { transform: "translateX(0%)" },
         },
       },
