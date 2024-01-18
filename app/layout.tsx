@@ -16,7 +16,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" className={clsx(suit.className)}>
       <body>
-        <ThemeProviderComp>{children}</ThemeProviderComp>
+        <ThemeProviderComp>
+          {children}
+          <div id="modal"></div>
+        </ThemeProviderComp>
       </body>
     </html>
   );

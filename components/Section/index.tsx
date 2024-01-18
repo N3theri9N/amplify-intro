@@ -1,6 +1,7 @@
 import useEnterSection from "@/app/hooks/useEnterSection";
 import { clsx } from "clsx";
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useRef } from "react";
+import SkillCards from "../SkillCards";
 
 export const GateSection = (): JSX.Element => {
   const gateRef = useRef<HTMLDivElement>(null);
@@ -27,7 +28,7 @@ export const IntroSection = (): JSX.Element => {
     <Section className="text-lg" id="intro">
       <div ref={introduceRef} className="flex flex-col w-full h-full justify-between">
         <div>
-          <h1 className="text-3xl">THIS IS ME</h1>
+          <h1>THIS IS ME</h1>
         </div>
         <div className="border-2 relative left-[30%] dark:border-white border-black p-4 rounded-xl">
           <h2>NAME</h2>
@@ -40,23 +41,54 @@ export const IntroSection = (): JSX.Element => {
   );
 };
 export const CareerSection = (): JSX.Element => {
-  return <Section className="text-lg">PAGE 2</Section>;
-};
-export const ProjectSection = (): JSX.Element => {
+  const careerRef = useRef<HTMLDivElement>(null);
+  useEnterSection({ ref: careerRef, delay: 100 });
   return (
     <Section className="text-lg">
-      <div>
-        <h1 className="text-3xl">기술스택</h1>
+      <div ref={careerRef} className="flex flex-col w-full h-full justify-between">
+        <div>
+          <h1>CAREERS</h1>
+        </div>
+        <div className="border-2 relative left-[30%] dark:border-white border-black p-4 rounded-xl">
+          <h2>NAME</h2>
+        </div>
+        <div className="border-2 relative right-[30%] dark:border-white border-black p-4 rounded-xl">
+          <h2 className="text-right">NAME</h2>
+        </div>
       </div>
-      <div>
-        <div>JAVASCRIPT</div>
+    </Section>
+  );
+};
+export const ProjectSection = (): JSX.Element => {
+  const projectRef = useRef<HTMLDivElement>(null);
+  useEnterSection({ ref: projectRef, delay: 100 });
+  return (
+    <Section className="text-lg">
+      <div ref={projectRef} className="flex flex-col w-full h-full justify-between">
+        <div>
+          <h1>PROJECTS</h1>
+        </div>
+        <div className="border-2 relative left-[30%] dark:border-white border-black p-4 rounded-xl">
+          <h2>NAME</h2>
+        </div>
       </div>
     </Section>
   );
 };
 
 export const SkillSection = (): JSX.Element => {
-  return <Section className="">MY SKILL CARDS</Section>;
+  const skillRef = useRef<HTMLDivElement>(null);
+  useEnterSection({ ref: skillRef, delay: 100 });
+  return (
+    <Section>
+      <div ref={skillRef}>
+        <div>
+          <h1>MY SKILL CARDS</h1>
+        </div>
+        <SkillCards />
+      </div>
+    </Section>
+  );
 };
 
 const Section = ({

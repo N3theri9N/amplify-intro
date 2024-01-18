@@ -42,7 +42,8 @@ const useEnterSection = ({
     const observer = new IntersectionObserver(
       async (entries: IntersectionObserverEntry[]) => {
         const sectionEl = entries[0];
-        const childTarget: NodeListOf<HTMLDivElement> = sectionEl.target.querySelectorAll("div");
+        const childTarget: NodeListOf<HTMLDivElement> =
+          sectionEl.target.querySelectorAll(":scope>div");
         if (sectionEl.isIntersecting) {
           childTarget.forEach((target: HTMLDivElement, index: number) => {
             promises.push(createPromise(target, index));
@@ -58,7 +59,7 @@ const useEnterSection = ({
     );
 
     const sectionRef: HTMLElement = ref.current as HTMLElement;
-    const childCollection: NodeListOf<HTMLDivElement> = sectionRef.querySelectorAll("div");
+    const childCollection: NodeListOf<HTMLDivElement> = sectionRef.querySelectorAll(":scope>div");
     childCollection.forEach((target: HTMLDivElement) => {
       setInvisible(target);
     });
