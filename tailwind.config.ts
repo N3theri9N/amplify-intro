@@ -16,6 +16,30 @@ const config: Config = {
       colors: {
         lightgry: "#f0f0f0",
       },
+      keyframes: {
+        fadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        fadeOut: {
+          from: { opacity: "1" },
+          to: { opacity: "0" },
+        },
+        goRight: {
+          from: { transform: "translateX(10%)" },
+          to: { transform: "translateX(0%)" },
+        },
+        goLeft: {
+          from: { transform: "translateX(-10%)" },
+          to: { transform: "translateX(0%)" },
+        },
+      },
+      animation: {
+        fadeIn: "fadeIn 500ms",
+        fadeOut: "fadeOut 500ms",
+        goRight: "goRight 500ms",
+        goLeft: "goLeft 500ms",
+      },
     },
   },
   darkMode: ["class"],

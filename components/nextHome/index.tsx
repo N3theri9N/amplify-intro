@@ -4,7 +4,6 @@ import Image from "next/image";
 
 const NextHome = (): JSX.Element => {
   const { theme, setTheme } = useTheme();
-  console.log("current theme : ", theme);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24 dark:bg-gray">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">

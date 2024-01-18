@@ -14,3 +14,13 @@ export const stardust = localFont({
     },
   ],
 });
+
+export const suit = localFont({
+  src: [
+    {
+      path: "./suit.woff2",
+      weight: "500",
+      style: "normal",
+    },
+  ],
+});
