@@ -37,7 +37,7 @@ export default function Loading(): JSX.Element {
         <div className="text-center opacity-0">STORY</div>
         <div className="animate-goLeft" />
         <div className="text-center opacity-0 text-base">
-          주의 : 현재 페이지에선 PC 환경에서만 최적화되어있습니다. 모바일 버전은 추후 대응중입니다
+          ( 현재 PC 환경에서만 최적화되어있습니다. 모바일 버전은 추후 대응중입니다. )
         </div>
         <div className="animate-goRight" />
       </div>

@@ -1,15 +1,33 @@
+"use client";
 import MainComponent from "@/components";
 import { splashTime } from "./loadingControlOption";
 
-// serverComponent
-export default async function Home() {
-  const promise: Promise<string> = new Promise((res) => {
-    setTimeout(() => {
-      res(String(Math.floor(Math.random() * 100000)));
-    }, splashTime);
-  });
+let promise: Promise<any> | undefined;
+let promiseStatus: "fulfilled" | "rejected" | "pending";
+let promiseValue: any;
 
-  const data: string = await promise.then();
+export default function Home() {
+  wrapPromise();
+  return promiseValue && <MainComponent />;
+}
 
-  return data && <MainComponent />;
+function wrapPromise() {
+  if (!promise) {
+    promise = new Promise((res) => {
+      setTimeout(() => {
+        res("TRUE");
+      }, 5000);
+    });
+  }
+
+  if (promiseStatus === "fulfilled") {
+    return promiseValue;
+  } else {
+    promiseStatus = "pending";
+    promise.then((result) => {
+      promiseStatus = "fulfilled";
+      promiseValue = result;
+    });
+  }
+  throw promise;
 }
