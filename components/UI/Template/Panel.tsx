@@ -1,4 +1,4 @@
-import { Company } from "@/app/types/Company";
+import { Company } from "@/types/Company";
 import { clsx } from "clsx";
 import { ReactNode } from "react";
 

@@ -3,7 +3,7 @@ import MainComponent from "@/components";
 import { splashTime } from "./loadingControlOption";
 
 let promise: Promise<any> | undefined;
-let promiseStatus: "fulfilled" | "rejected" | "pending";
+let promiseStatus: "fulfilled" | "rejected" | "pending" = "pending";
 let promiseValue: any;
 
 export default function Home() {
@@ -16,7 +16,7 @@ function wrapPromise() {
     promise = new Promise((res) => {
       setTimeout(() => {
         res("TRUE");
-      }, 5000);
+      }, splashTime);
     });
   }
 
