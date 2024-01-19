@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { cardData, SkillCardType } from "./skillData";
 import * as CardCompoent from "./CardComponents";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 
 const SkillCards = (): JSX.Element => {
   return (
@@ -23,7 +23,7 @@ const Card = ({ image, title, description, grade }: SkillCardType) => {
   return (
     <>
       <div
-        className="border-2 border-black dark:border-white rounded-xl p-2 cursor-zoom-in"
+        className="border-2 border-black dark:border-white w-full mx-auto max-w-[250px] rounded-xl p-2 cursor-zoom-in"
         onClick={onClickHandler}
       >
         <Image

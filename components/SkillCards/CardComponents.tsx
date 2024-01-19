@@ -100,7 +100,7 @@ export const ModalUI = ({
       <div className="flex h-screen items-center">
         <div
           ref={detailedCardRef}
-          className="w-[300px] m-auto h-[500px] rounded-xl bg-white dark:bg-black duration-100"
+          className="w-[300px] m-auto h-[500px] rounded-xl bg-white dark:bg-slate-900 duration-100"
           onClick={stopPropogate}
           onMouseMove={mouseMoveHandler}
           onMouseOut={reset}

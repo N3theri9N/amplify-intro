@@ -1,5 +1,6 @@
 "use client";
 import { RefObject, useEffect } from "react";
+import { setHorizontalFadeInAnimation, setFadeOut } from "@/utils/animation";
 
 const useEnterSection = ({
   ref,
@@ -9,25 +10,6 @@ const useEnterSection = ({
   delay?: number;
 }) => {
   useEffect(() => {
-    const invisible = ["opacity-0"];
-    const animationClass = ["animate-fadeIn", "duration-500"];
-    const goLeftClass = ["animate-goLeft"];
-    const goRightClass = ["animate-goRight"];
-
-    const setInvisible = (target: HTMLDivElement) => {
-      target.classList.remove(...animationClass, ...goRightClass, ...goLeftClass);
-      target.classList.add(...invisible);
-    };
-
-    const setHorizontalFadeInAnimation = (target: HTMLDivElement, index: number) => {
-      target.classList.remove(...invisible);
-      if (index % 2 === 0) {
-        target.classList.add(...animationClass, ...goLeftClass);
-      } else {
-        target.classList.add(...animationClass, ...goRightClass);
-      }
-    };
-
     const promises: any = [];
 
     const createPromise = (target: HTMLDivElement, index: number): Promise<""> => {
@@ -51,7 +33,7 @@ const useEnterSection = ({
         } else {
           await Promise.all(promises);
           childTarget.forEach((target: HTMLDivElement) => {
-            setInvisible(target);
+            setFadeOut(target);
           });
         }
       },
@@ -61,7 +43,7 @@ const useEnterSection = ({
     const sectionRef: HTMLElement = ref.current as HTMLElement;
     const childCollection: NodeListOf<HTMLDivElement> = sectionRef.querySelectorAll(":scope>div");
     childCollection.forEach((target: HTMLDivElement) => {
-      setInvisible(target);
+      setFadeOut(target);
     });
 
     observer.observe(sectionRef);

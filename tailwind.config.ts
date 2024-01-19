@@ -14,7 +14,12 @@ const config: Config = {
         // "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
+        grey: "#808080",
         lightgry: "#f0f0f0",
+        hitchmed: "#C43F41",
+        "dark-hitchmed": "#C43F41",
+        ntsgreen: "#08A045",
+        "dark-ntsgreen": "#6DFE82",
       },
       keyframes: {
         fadeIn: {

@@ -1,5 +1,5 @@
-import SparkleSVG from "../../svg/sparkle.svg";
-import CloudSVG from "../../svg/cloud.svg";
+import SparkleSVG from "@/svg/sparkle.svg";
+import CloudSVG from "@/svg/cloud.svg";
 import { clsx } from "clsx";
 
 export const Background = ({
