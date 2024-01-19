@@ -1,15 +1,15 @@
-"use clent";
 import MainComponent from "@/components";
-import { splasyTime as splashTime } from "./loadingControlOption";
+import { splashTime } from "./loadingControlOption";
 
+// serverComponent
 export default async function Home() {
-  const promise = new Promise((res) => {
+  const promise: Promise<string> = new Promise((res) => {
     setTimeout(() => {
-      res(true);
+      res(String(Math.floor(Math.random() * 100000)));
     }, splashTime);
   });
 
-  const data = await promise.then();
+  const data: string = await promise.then();
 
   return data && <MainComponent />;
 }

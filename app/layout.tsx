@@ -4,6 +4,8 @@ import { suit } from "@/font/localFont";
 import "./globals.css";
 import { clsx } from "clsx";
 import ThemeProviderComp from "./ThemeProvider";
+import { Suspense } from "react";
+import Loading from "./loading";
 // import { NextFont } from "next/dist/compiled/@next/font";
 
 export const metadata: Metadata = {
@@ -17,8 +19,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" className={clsx(suit.className)}>
       <body>
         <ThemeProviderComp>
-          {children}
-          <div id="modal"></div>
+          <Suspense fallback={<Loading />}>
+            {children}
+            <div id="modal"></div>
+          </Suspense>
         </ThemeProviderComp>
       </body>
     </html>
