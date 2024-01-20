@@ -9,3 +9,10 @@ h1 {
 h2 {
   @apply text-2xl font-semibold;
 }
+
+main {
+  @apply text-base font-light;
+}
+p {
+  @apply mt-2;
+}
