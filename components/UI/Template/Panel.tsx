@@ -5,13 +5,17 @@ import { ReactNode } from "react";
 type Position = "left" | "right";
 
 const Panel = ({
-  children,
+  period,
   className,
   company,
   title,
+  subTitle,
+  description,
   position = "left",
 }: {
-  children: ReactNode;
+  period: string;
+  subTitle: ReactNode;
+  description?: ReactNode;
   className?: string;
   company: Company;
   title: string;
@@ -19,7 +23,7 @@ const Panel = ({
 }) => {
   return (
     <div
-      className={clsx("border-4 relative p-4 rounded-xl", {
+      className={clsx("border-4 relative p-4 rounded-xl duration-500", {
         className,
         "border-hitchmed dark:border-dark-hitchmed": company === "HITCHMED",
         "border-ntsgreen dark:border-dark-ntsgreen": company === "NTS",
@@ -28,7 +32,17 @@ const Panel = ({
       })}
     >
       <Title company={company}>{title}</Title>
-      {children}
+      <Period>{period}</Period>
+      <SubTitle company={company}>{subTitle}</SubTitle>
+      <div className="w-full">
+        <main
+          className={clsx("text-sm w-[70%]", {
+            "float-right": position === "left",
+          })}
+        >
+          {description}
+        </main>
+      </div>
     </div>
   );
 };
@@ -50,6 +64,29 @@ export const Title = ({
       {children}
     </h2>
   );
+};
+
+export const SubTitle = ({
+  company,
+  children,
+}: {
+  company: Company;
+  children: ReactNode;
+}): JSX.Element => {
+  return (
+    <h3
+      className={clsx({
+        "text-hitchmed dark:text-dark-hitchmed": company === "HITCHMED",
+        "text-ntsgreen dark:text-dark-ntsgreen": company === "NTS",
+      })}
+    >
+      {children}
+    </h3>
+  );
+};
+
+export const Period = ({ children, className }: { children: string; className?: string }) => {
+  return <span className={clsx("text-grey text-sm", className)}>{children}</span>;
 };
 
 export default Panel;

@@ -100,7 +100,7 @@ export const ModalUI = ({
       <div className="flex h-screen items-center">
         <div
           ref={detailedCardRef}
-          className="w-[300px] m-auto h-[500px] rounded-xl bg-white dark:bg-slate-900 duration-100"
+          className="w-[300px] m-auto h-[500px] rounded-xl bg-white dark:bg-black duration-100"
           onClick={stopPropogate}
           onMouseMove={mouseMoveHandler}
           onMouseOut={reset}
@@ -111,10 +111,19 @@ export const ModalUI = ({
     </Modal>
   );
 };
-export const Details = ({ image, title, description, grade }: SkillCardType): JSX.Element => {
+export const Details = ({
+  image,
+  title,
+  description,
+  grade,
+  type,
+  tooltip,
+}: SkillCardType): JSX.Element => {
   return (
     <div className="border-2 rounded-xl border-black dark:border-white m-1 h-[492px]">
-      <div className="flex flex-col">
+      <div className="flex flex-col justify-around h-full">
+        <div className="text-lg font-semibold text-center">{type}</div>
+        <CardDivider />
         <Image
           className="mx-auto py-1"
           alt={title}
@@ -123,15 +132,24 @@ export const Details = ({ image, title, description, grade }: SkillCardType): JS
           height={0}
           style={{ height: "auto" }}
         />
-
-        <div className="h-[1px] dark:bg-white bg-black"></div>
-
-        <div className="pt-3 px-3">
+        <CardDivider />
+        <div className="py-3 px-3 flex-1">
+          <label className="text-sm italic">{description}</label>
           <h2>{title}</h2>
-          <div>{description}</div>
+          {tooltip?.map((text, index) => {
+            return <p key={`${title}_${index}`}>{text}</p>;
+          })}
+        </div>
+
+        {/* <div className="mx-2 mb-1 italic text-sm">승급조건 : 유틸리티 함수에 대한 이해</div> */}
+        <CardDivider />
+        <div className="mx-2 text-lg">
           <LevelGuage level={grade} />
         </div>
       </div>
     </div>
   );
+};
+const CardDivider = () => {
+  return <div className="h-[1px] dark:bg-white bg-black"></div>;
 };

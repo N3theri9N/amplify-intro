@@ -10,15 +10,15 @@ export const setHorizontalFadeInAnimation = (target: HTMLDivElement, index: numb
 
   target.classList.remove(...fadeOut);
   if (index % 2 === 0) {
-    target.classList.add(...fadeIn, ...goLeft);
+    target.classList.add(...goLeft, ...fadeIn);
   } else {
-    target.classList.add(...fadeIn, ...goRight);
+    target.classList.add(...goRight, ...fadeIn);
   }
 };
 
 export const setFadeOut = (target: HTMLDivElement) => {
   const { fadeOut, fadeIn, goLeft, goRight } = classes;
 
-  target.classList.remove(...fadeIn, ...goRight, ...goLeft);
+  target.classList.remove(...goRight, ...goLeft, ...fadeIn);
   target.classList.add(...fadeOut);
 };
