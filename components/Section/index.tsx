@@ -6,48 +6,50 @@ import Panel from "@/components/UI/Template/Panel";
 import Link from "next/link";
 import LinkButton from "../UI/Template/LinkButton";
 import style from "./section.module.css";
+import DeveloperSVG from "@/svg/developer.svg";
+import { useTheme } from "next-themes";
 
 export const IntroSection = (): JSX.Element => {
   const introduceRef = useRef<HTMLDivElement>(null);
+
+  const { theme } = useTheme();
+
   useEnterSection({ ref: introduceRef, delay: 50 });
   return (
     <Section className="text-lg" id="intro">
       <div
         ref={introduceRef}
-        className="grid grid-cols-2 gap-4"
-        // className="grid grid-cols-2 gap-4 grid-rows-[repeat(3,minmax(auto,250px))] mx-auto flex-col w-full h-full justify-between"
+        className="grid grid-cols-2 grid-rows-[auto_0_auto_auto_auto_1fr_1fr] gap-x-4 h-[calc(100vh-128px)]"
       >
-        <div className="col-[span_2]">
+        <div className="col-[span_2] opacity-0">
           <h1>THIS IS ME</h1>
         </div>
-        <div className="col-[span_2]"></div>
-        <div>
-          <div className="flex flex-col w-[80%] gap-2 border-t-2 border-b-2 relative dark:border-white border-black p-4">
-            <h2>김도윤</h2>
-            <h3>FRONT END DEVELOPER</h3>
-            <div>E-mail : nnea5215@gmail.com</div>
-            <div className="flex gap-x-2">
-              <span>Link:</span>
-              <LinkButton href="https://github.com/N3theri9N" target="_blank">
-                git
-              </LinkButton>
-              <LinkButton
-                href="https://nnea5215.notion.site/nnea5215/882d97d198f44902adfb1c48ef21055c"
-                target="_blank"
-              >
-                Notion
-              </LinkButton>
-              <LinkButton
-                href="https://docs.google.com/document/d/1t55DCLkIJ42rbnxbMYThunXZhvl6qfgwBCu5h2MYxco/edit?usp=sharing"
-                target="_blank"
-              >
-                Resume
-              </LinkButton>
-            </div>
+        <div className="col-[span_2] h-0"></div>
+        <div className="flex flex-col w-[80%] gap-2 border-t-2 border-b-2 dark:border-white border-black p-4 opacity-0">
+          <h2>DO-YOON KIM</h2>
+          <h3>FRONT END DEVELOPER</h3>
+          <div>E-mail : nnea5215@gmail.com</div>
+          <div className="flex gap-x-2">
+            <span>Link:</span>
+            <LinkButton href="https://github.com/N3theri9N" target="_blank">
+              git
+            </LinkButton>
+            <LinkButton
+              href="https://nnea5215.notion.site/nnea5215/882d97d198f44902adfb1c48ef21055c"
+              target="_blank"
+            >
+              Notion
+            </LinkButton>
+            <LinkButton
+              href="https://docs.google.com/document/d/1t55DCLkIJ42rbnxbMYThunXZhvl6qfgwBCu5h2MYxco/edit?usp=sharing"
+              target="_blank"
+            >
+              Resume
+            </LinkButton>
           </div>
         </div>
         <div
-          className={`flex flex-col gap-2 border-2 mt-20 rounded-xl border-black dark:border-white p-4 ${style.caption} relative`}
+          className={`flex flex-col gap-2 text-base border-2 rounded-xl border-black dark:border-white p-2 mx-4 ${style.caption} relative opacity-0`}
         >
           <div>1. NextJS 기반 프론트엔드 개발자.</div>
           <div>
@@ -58,41 +60,51 @@ export const IntroSection = (): JSX.Element => {
             4. 풀스택 개발 경험과 마케터간 협업 경험으로 개발팀 내외적인 커뮤니케이션 능력 보유.
           </div>
         </div>
-        <div className="col-[span_2]">
+        <div className="col-[span_2] relative border-black dark:border-white border-b-2 h-16">
+          <DeveloperSVG
+            className="h-16 absolute left-[calc(50%-45px)] bottom-0"
+            fill={theme === "dark" ? "white" : "black"}
+          />
+        </div>
+        <div className="col-[span_2] mt-1 opacity-0">
           <h1>CAREERS</h1>
         </div>
-        <div className="col-[span_2]"></div>
-        <Panel
-          company="HITCHMED"
-          title="HITCHMED"
-          className="mb-32"
-          period="2023.06 ~ 2024.01 ( 8 Months )"
-          subTitle="현지 여행객의 병원 예약과 증상문진 기능을 제공하는 헬스케어 이지닥 애플리케이션 제작"
-          description={
-            <>
-              <div>
-                url :
-                <Link target="_blank" href="https://easy-doc.app">
-                  https://easy-doc.app
-                </Link>
-              </div>
-              <div>프로젝트 매니저 / 프론트엔드 개발자</div>
-            </>
-          }
-        />
-        <Panel
-          company="NTS"
-          title="N TECH SERVICE"
-          className="mt-32"
-          period="2017.07 ~ 2022.06 ( 5 Years )"
-          subTitle={
-            <div>
-              네이버 자회사로 본사 마케팅 업무의 페이지 제작을 지원.
-              <br /> 웹서비스 개발실에서는 네이버 프로모션에 사용될 페이지 개발업무를 진행.
-            </div>
-          }
-          description={"웹서비스 개발실 / 풀스택 개발자"}
-        ></Panel>
+        <div className="col-[span_2] my-auto">
+          <Panel
+            company="HITCHMED"
+            title="HITCHMED"
+            period="2023.06 ~ 2024.01 ( 8 Months )"
+            subTitle="현지 여행객의 병원 예약과 증상문진 기능을 제공하는 헬스케어 이지닥 애플리케이션 제작"
+            position="left"
+            description={
+              <>
+                <p>
+                  url :
+                  <Link target="_blank" href="https://easy-doc.app">
+                    https://easy-doc.app
+                  </Link>
+                </p>
+                <p>프로젝트 매니저 / 프론트엔드 개발자</p>
+              </>
+            }
+          />
+        </div>
+        <div className="col-[span_2] my-auto">
+          <Panel
+            company="NTS"
+            title="N TECH SERVICE"
+            className="h-[calc(100%-20px)] relative bottom-0"
+            period="2017.07 ~ 2022.06 ( 5 Years )"
+            position="right"
+            subTitle={
+              <p>
+                네이버 자회사로 본사 마케팅 업무의 페이지 제작을 지원.
+                <br /> 웹서비스 개발실에서는 네이버 프로모션에 사용될 페이지 개발업무를 진행.
+              </p>
+            }
+            description={"웹서비스 개발실 / 풀스택 개발자"}
+          />
+        </div>
       </div>
     </Section>
   );
@@ -147,7 +159,7 @@ export const ProjectSection = (): JSX.Element => {
   useEnterSection({ ref: projectRef, delay: 300 });
   return (
     <Section className="text-lg">
-      <div ref={projectRef} className="flex flex-col w-full h-full justify-between">
+      <div ref={projectRef} className="flex flex-col w-full h-full justify-between ">
         <div>
           <h1>PROJECTS</h1>
         </div>
@@ -327,7 +339,7 @@ const Section = ({
     <section
       id={id}
       className={clsx(
-        `py-16 px-16 snap-start overflow-x-hidden h-screen w-screen bg-white dark:bg-gray-900 duration-300 transition-[background-color_0.3s] ${className}`
+        `py-16 px-16 snap-start overflow-hidden h-screen w-screen bg-white dark:bg-gray-900 duration-300 transition-[background-color_0.3s] ${className}`
       )}
     >
       {children}

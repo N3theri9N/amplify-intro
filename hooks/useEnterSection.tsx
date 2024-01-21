@@ -37,7 +37,7 @@ const useEnterSection = ({
           });
         }
       },
-      { threshold: 0.95 }
+      { threshold: 0.8 }
     );
 
     const sectionRef: HTMLElement = ref.current as HTMLElement;

@@ -1,13 +1,13 @@
 .caption::after {
   border-color: #000000;
-  border-top: 15px solid;
-  border-left: 15px solid transparent;
-  border-right: 0px solid transparent;
-  border-bottom: 0px solid transparent;
+  border-top: 0px solid transparent;
+  border-left: 15px solid;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid transparent;
   content: "";
   position: absolute;
-  top: 10px;
-  left: -15px;
+  bottom: -15px;
+  left: 15px;
 }
 .caption::after:is(.dark .dark\:border-white) {
   border-color: #ffffff;

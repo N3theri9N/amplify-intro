@@ -6,7 +6,7 @@ type Position = "left" | "right" | "center";
 
 const Panel = ({
   period,
-  className,
+  className = "",
   company,
   title,
   subTitle,
@@ -23,7 +23,7 @@ const Panel = ({
 }) => {
   return (
     <div
-      className={clsx(`border-4 relative rounded-xl opacity-0 duration-500 ${className}`, {
+      className={clsx(`border-4 relative rounded-xl duration-500 ${className}`, {
         "border-hitchmed dark:border-dark-hitchmed": company === "HITCHMED",
         "border-ntsgreen dark:border-dark-ntsgreen": company === "NTS",
         "right-[30%] text-right": position === "left",
@@ -34,7 +34,7 @@ const Panel = ({
       <div className="px-4">
         <Period>{period}</Period>
         <SubTitle company={company}>{subTitle}</SubTitle>
-        <div className="w-full float-right mb-4">
+        <div className="w-full mb-4">
           <main
             className={clsx("text-sm w-[70%]", {
               "relative left-[30%]": position === "left",
