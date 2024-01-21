@@ -44,7 +44,7 @@ export const cardData: SkillCardType[] = [
     ],
   },
   {
-    image: "TypeScript.svg",
+    image: "typescript.svg",
     title: "TypeScript",
     description: "타입스크립트",
     grade: 5,
@@ -56,7 +56,7 @@ export const cardData: SkillCardType[] = [
   },
 
   {
-    image: "ReactJS.svg",
+    image: "reactjs.svg",
     title: "React",
     description: "리액트",
     grade: 7,
@@ -68,7 +68,7 @@ export const cardData: SkillCardType[] = [
     ],
   },
   {
-    image: "NextJS.svg",
+    image: "nextjs.svg",
     title: "NextJS",
     description: "넥스트 제이에스",
     grade: 7,
@@ -80,7 +80,7 @@ export const cardData: SkillCardType[] = [
     ],
   },
   {
-    image: "ReactQuery.svg",
+    image: "reactquery.svg",
     title: "React-Query",
     description: "리액트 쿼리",
     grade: 6,
