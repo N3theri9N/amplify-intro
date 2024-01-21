@@ -1,15 +1,16 @@
 import useEnterSection from "@/hooks/useEnterSection";
 import { clsx } from "clsx";
-import { ReactNode, useRef } from "react";
+import { ReactNode, useCallback, useRef } from "react";
 import SkillCards from "../SkillCards";
 import Panel from "@/components/UI/Template/Panel";
 import Link from "next/link";
 import * as IntroComponent from "./IntroComponent";
+import { fadeInOutApplier } from "@/utils/animation";
 
 export const IntroSection = (): JSX.Element => {
-  const introduceRef = useRef<HTMLDivElement>(null);
-
-  useEnterSection({ ref: introduceRef, delay: 50 });
+  const introduceRef = useCallback(fadeInOutApplier(50), []);
+  // const introduceRef = useRef<HTMLDivElement>(null);
+  // useEnterSection({ ref: introduceRef, delay: 50 });
   return (
     <Section className="text-lg" id="intro">
       <div
@@ -32,8 +33,9 @@ export const IntroSection = (): JSX.Element => {
   );
 };
 export const CareerSection = (): JSX.Element => {
-  const careerRef = useRef<HTMLDivElement>(null);
-  useEnterSection({ ref: careerRef, delay: 100 });
+  const careerRef = useCallback(fadeInOutApplier(100), []);
+  // const careerRef = useRef<HTMLDivElement>(null);
+  // useEnterSection({ ref: careerRef, delay: 100 });
   return (
     <Section className="text-lg">
       <div ref={careerRef} className="flex flex-col w-full h-full justify-between">
@@ -77,8 +79,9 @@ export const CareerSection = (): JSX.Element => {
 };
 
 export const ProjectSection = (): JSX.Element => {
-  const projectRef = useRef<HTMLDivElement>(null);
-  useEnterSection({ ref: projectRef, delay: 300 });
+  const projectRef = useCallback(fadeInOutApplier(300), []);
+  // const projectRef = useRef<HTMLDivElement>(null);
+  // useEnterSection({ ref: projectRef, delay: 300 });
   return (
     <Section className="text-lg">
       <div ref={projectRef} className="flex flex-col w-full h-full justify-between ">
@@ -153,8 +156,9 @@ export const ProjectSection = (): JSX.Element => {
 };
 
 export const ProjectSectionSecond = (): JSX.Element => {
-  const projectRef = useRef<HTMLDivElement>(null);
-  useEnterSection({ ref: projectRef, delay: 300 });
+  const projectRef = useCallback(fadeInOutApplier(300), []);
+  // const projectRef = useRef<HTMLDivElement>(null);
+  // useEnterSection({ ref: projectRef, delay: 300 });
   return (
     <Section className="text-lg">
       <div ref={projectRef} className="flex flex-col w-full h-full justify-between">
@@ -234,8 +238,8 @@ export const ProjectSectionSecond = (): JSX.Element => {
 };
 
 export const SkillSection = (): JSX.Element => {
-  const skillRef = useRef<HTMLDivElement>(null);
-  useEnterSection({ ref: skillRef, delay: 390 });
+  const skillRef = useCallback(fadeInOutApplier(390), []);
+
   return (
     <Section>
       <div ref={skillRef}>
