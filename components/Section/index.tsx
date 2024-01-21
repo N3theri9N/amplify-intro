@@ -2,11 +2,10 @@ import useEnterSection from "@/hooks/useEnterSection";
 import { clsx } from "clsx";
 import { ReactNode, useRef } from "react";
 import SkillCards from "../SkillCards";
-import { Period } from "../UI/Template/Label";
-import Panel, * as PanelComponents from "@/components/UI/Template/Panel";
+import Panel from "@/components/UI/Template/Panel";
 import Link from "next/link";
 import LinkButton from "../UI/Template/LinkButton";
-import Image from "next/image";
+import style from "./section.module.css";
 
 export const IntroSection = (): JSX.Element => {
   const introduceRef = useRef<HTMLDivElement>(null);
@@ -15,11 +14,15 @@ export const IntroSection = (): JSX.Element => {
     <Section className="text-lg" id="intro">
       <div
         ref={introduceRef}
-        className="grid grid-cols-2 gap-4 max-w-[600px] grid-rows-[repeat(3,minmax(auto,250px))] mx-auto flex-col w-full h-full justify-between"
+        className="grid grid-cols-2 gap-4"
+        // className="grid grid-cols-2 gap-4 grid-rows-[repeat(3,minmax(auto,250px))] mx-auto flex-col w-full h-full justify-between"
       >
-        <div className="opacity-0">
+        <div className="col-[span_2]">
           <h1>THIS IS ME</h1>
-          <div className="border-t-2 border-b-2 relative dark:border-white  border-black p-4">
+        </div>
+        <div className="col-[span_2]"></div>
+        <div>
+          <div className="flex flex-col w-[80%] gap-2 border-t-2 border-b-2 relative dark:border-white border-black p-4">
             <h2>김도윤</h2>
             <h3>FRONT END DEVELOPER</h3>
             <div>E-mail : nnea5215@gmail.com</div>
@@ -43,33 +46,53 @@ export const IntroSection = (): JSX.Element => {
             </div>
           </div>
         </div>
-        <div />
-        <div className="border-t-2 border-l-2 dark:border-white border-black p-4 rounded-tl-3xl text-right">
-          <div className="text-2xl">
-            前) PHP, Spring 기반
-            <br />
-            풀스택 개발자.
-            <br />
-            現) NextJS 기반
-            <br />
-            프론트엔드 개발자.
+        <div
+          className={`flex flex-col gap-2 border-2 mt-20 rounded-xl border-black dark:border-white p-4 ${style.caption} relative`}
+        >
+          <div>1. NextJS 기반 프론트엔드 개발자.</div>
+          <div>
+            2. UI/UX/DX 개선, 접근성, 디자인 시스템 등등 다양한 방법으로 프로젝트 고도화/최적화.
+          </div>
+          <div>3. 운영과 개발 프로세스의 향상을 항상 고민하며 운영과 생산성을 지속적으로 개선.</div>
+          <div>
+            4. 풀스택 개발 경험과 마케터간 협업 경험으로 개발팀 내외적인 커뮤니케이션 능력 보유.
           </div>
         </div>
-        <div className="border-t-2 border-r-2 dark:border-white border-black p-4 rounded-tr-3xl">
-          <div className="text-2xl">
-            UI/UX/DX 개선, 접근성, 디자인 시스템 등등 다양한 방법으로 프로젝트 고도화/최적화.
-          </div>
+        <div className="col-[span_2]">
+          <h1>CAREERS</h1>
         </div>
-        <div className="border-b-2 border-l-2 dark:border-white border-black p-4 rounded-bl-3xl text-right">
-          <div className="text-2xl flex items-end h-full">
-            운영과 개발 프로세스의 향상을 항상 고민하며 운영과 생산성을 지속적으로 개선.
-          </div>
-        </div>
-        <div className="border-b-2 border-r-2  dark:border-white border-black p-4 rounded-br-3xl">
-          <div className="text-2xl flex items-end h-full">
-            풀스택 개발 경험과 마케터간 협업 경험으로 개발팀 내외적인 커뮤니케이션 능력 보유.
-          </div>
-        </div>
+        <div className="col-[span_2]"></div>
+        <Panel
+          company="HITCHMED"
+          title="HITCHMED"
+          className="mb-32"
+          period="2023.06 ~ 2024.01 ( 8 Months )"
+          subTitle="현지 여행객의 병원 예약과 증상문진 기능을 제공하는 헬스케어 이지닥 애플리케이션 제작"
+          description={
+            <>
+              <div>
+                url :
+                <Link target="_blank" href="https://easy-doc.app">
+                  https://easy-doc.app
+                </Link>
+              </div>
+              <div>프로젝트 매니저 / 프론트엔드 개발자</div>
+            </>
+          }
+        />
+        <Panel
+          company="NTS"
+          title="N TECH SERVICE"
+          className="mt-32"
+          period="2017.07 ~ 2022.06 ( 5 Years )"
+          subTitle={
+            <div>
+              네이버 자회사로 본사 마케팅 업무의 페이지 제작을 지원.
+              <br /> 웹서비스 개발실에서는 네이버 프로모션에 사용될 페이지 개발업무를 진행.
+            </div>
+          }
+          description={"웹서비스 개발실 / 풀스택 개발자"}
+        ></Panel>
       </div>
     </Section>
   );
@@ -112,7 +135,7 @@ export const CareerSection = (): JSX.Element => {
               <br /> 웹서비스 개발실에서는 네이버 프로모션에 사용될 페이지 개발업무를 진행.
             </div>
           }
-          description={"웹서비스 개발실 / 풀스택 개발자 활동"}
+          description={"웹서비스 개발실 / 풀스택 개발자"}
         ></Panel>
       </div>
     </Section>
