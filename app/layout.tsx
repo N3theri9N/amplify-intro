@@ -9,7 +9,7 @@ import Loading from "./loading";
 // import { NextFont } from "next/dist/compiled/@next/font";
 
 export const metadata: Metadata = {
-  title: "OmochaBako;ToyBox",
+  title: "My Fulled Front End Story",
   description: "개발연습중",
 };
 // const notoSans: NextFont = Noto_Sans({ subsets: ["latin"] });
