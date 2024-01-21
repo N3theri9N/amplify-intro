@@ -21,7 +21,7 @@ export const cardData: SkillCardType[] = [
     ],
   },
   {
-    image: "css.svg",
+    image: "Css.svg",
     title: "CSS",
     description: "씨에스에스",
     grade: 6,
@@ -33,7 +33,7 @@ export const cardData: SkillCardType[] = [
     ],
   },
   {
-    image: "javascript.svg",
+    image: "JavaScript.svg",
     title: "JavaScript",
     description: "자바스크립트",
     grade: 8,
@@ -44,7 +44,7 @@ export const cardData: SkillCardType[] = [
     ],
   },
   {
-    image: "typescript.svg",
+    image: "TypeScript.svg",
     title: "TypeScript",
     description: "타입스크립트",
     grade: 5,
@@ -56,7 +56,7 @@ export const cardData: SkillCardType[] = [
   },
 
   {
-    image: "reactjs.svg",
+    image: "ReactJS.svg",
     title: "React",
     description: "리액트",
     grade: 7,
@@ -68,7 +68,7 @@ export const cardData: SkillCardType[] = [
     ],
   },
   {
-    image: "nextjs.svg",
+    image: "NextJS.svg",
     title: "NextJS",
     description: "넥스트 제이에스",
     grade: 7,
