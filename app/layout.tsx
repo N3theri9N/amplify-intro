@@ -19,10 +19,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" className={clsx(suit.className)}>
       <body>
         <ThemeProviderComp>
-          <Suspense fallback={<Loading />}>
-            {children}
-            <div id="modal"></div>
-          </Suspense>
+          {/* <Suspense fallback={<Loading />}> */}
+          {children}
+          <div id="modal"></div>
+          {/* </Suspense> */}
         </ThemeProviderComp>
       </body>
     </html>
