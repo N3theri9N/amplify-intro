@@ -36,6 +36,7 @@ export const BackgroundDecoration = (): JSX.Element => {
 };
 
 export const Circle = ({ theme }: { theme: string | undefined }): JSX.Element => {
+  // console.log(theme);
   return (
     <label
       htmlFor={`toggleSwitch`}

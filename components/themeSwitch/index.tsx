@@ -4,13 +4,20 @@ import * as ToggleSwitch from "./ToggleSwitch";
 import React from "react";
 
 const ThemeSwitch = (): JSX.Element => {
-  const { theme, setTheme } = useTheme();
-
+  const { theme, setTheme, systemTheme } = useTheme();
+  console.log();
+  const getSystemTheme = (theme: string | undefined) => {
+    if (theme === "system") {
+      return systemTheme;
+    } else {
+      return theme;
+    }
+  };
   return (
     <div className="relative h-5">
-      <ToggleSwitch.Background theme={theme} setTheme={setTheme} />
+      <ToggleSwitch.Background theme={getSystemTheme(theme)} setTheme={setTheme} />
       <ToggleSwitch.BackgroundDecoration />
-      <ToggleSwitch.Circle theme={theme} />
+      <ToggleSwitch.Circle theme={getSystemTheme(theme)} />
     </div>
   );
 };

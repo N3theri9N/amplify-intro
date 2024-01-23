@@ -1,4 +1,3 @@
-import useEnterSection from "@/hooks/useEnterSection";
 import { clsx } from "clsx";
 import { ReactNode, useCallback, useRef } from "react";
 import SkillCards from "../SkillCards";
