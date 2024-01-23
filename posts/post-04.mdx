@@ -1,0 +1,316 @@
+---
+title: 포트폴리오 제작 비하인드
+date: 2024-01-21
+---
+
+# 포트폴리오 제작 비하인드
+
+생성 일시: 2024년 1월 21일 오후 1:29
+
+<aside>
+🧩 개발 환경
+
+- 프레임워크 : **NextJS 14.0.4, React v18**
+- 컨벤션 : **Prettier**, **TypeScript**
+- 스타일 : **Tailwindcss** 3.3.0, **CSSModule**
+</aside> 
+
+![lightHouse 측정 결과](%E1%84%91%E1%85%A9%E1%84%90%E1%85%B3%E1%84%91%E1%85%A9%E1%86%AF%E1%84%85%E1%85%B5%E1%84%8B%E1%85%A9%20%E1%84%8C%E1%85%A6%E1%84%8C%E1%85%A1%E1%86%A8%20%E1%84%87%E1%85%B5%E1%84%92%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%83%E1%85%B3%2047d67ae7f4b34c7aa8ed52aacf8d65f2/Untitled.png)
+
+lightHouse 측정 결과
+
+# 기능별 제작 비화.
+
+## 페이지 슬라이드
+
+슬라이드 기능은 snap 을 활용하였습니다.
+
+`components/index.tsx`
+
+```jsx
+import styles from "./Main.module.css";
+
+const MainComponent = (): JSX.Element => {
+  return (
+    <div className={`${styles.slides}`}>
+      <section className="snap-start" />
+      <section className="snap-start" />
+      <section className="snap-start" />
+      <section className="snap-start" />
+    </div>
+  );
+};
+```
+
+`components/Main.module.css`
+
+```css
+.slides {
+  height: 100vh;
+  width: 100%;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+}
+```
+
+그 결과 스크롤을 했을때 `<section>` 컴포넌트 위치로 가도록 적용은 되었습니다.
+
+다만 한 가지 문제가 있었는데 PC 에서는 스크롤을 멈추고 나서야, 다음 섹션으로 이동합니다. 매우 불편한데, 스크롤이 시작된 즉시 이동하게 수정할 필요가 있었습니다.
+
+그러므로 해당 `Section`에서 wheel 이벤트에 다른 동작을 하도록 이하와 같이 설정하였습니다.
+
+```jsx
+import styles from "./Main.module.css";
+import { ScrollWheelAdjust } from "./adjustScroll";
+
+const MainComponent = (): JSX.Element => {
+	**const divRefCallback = useCallback(ScrollWheelAdjust, []);**
+
+	return (
+		<div className={`${styles.slides}`} **ref={divRefCallback}**>
+			<section className="snap-start" />
+			<section className="snap-start" />
+			<section className="snap-start" />
+			<section className="snap-start" />
+		</div>
+	)
+}
+```
+
+`adjustScroll.ts`
+
+```jsx
+const onWheel = (node: HTMLDivElement) => (e: WheelEvent) => {
+  e.preventDefault();
+  if (e.deltaY > 0) {
+    node.scrollTo(0, node.scrollTop + window.innerHeight);
+  } else {
+    node.scrollTo(0, node.scrollTop - window.innerHeight);
+  }
+};
+
+export const ScrollWheelAdjust = (node: HTMLDivElement) => {
+  if (node == null) {
+    return;
+  }
+  node.addEventListener("wheel", onWheel(node), { passive: false });
+};
+```
+
+**하이드레이션이 완료된 후의 컴포넌트에 대응**해아하므로, `useRef` 를 통해 이벤트를 설정하였습니다.
+
+`wheel` 의 원래 기능을 하지 않는 대신, **현재 위치를 다음 / 이전 페이지의 위치로** `scrollTo()` 로 이벤트를 대응하여 스크롤이 시작되자마자 매끄럽게 이동하게 되었습니다.
+
+---
+
+## 레이아웃 애니메이션
+
+사방으로 페이드인으로 들어오는 애니메이션은 커스텀 훅으로 동작하도록 구현되어있습니다. 그래서 모든 페이지가 동일한 형태의 애니메이션으로 진행합니다.
+
+```jsx
+export const SkillSection = (): JSX.Element => {
+  const introduceRef = useCallback(fadeInOutApplier(390), []);
+  return (
+    <Section>
+      <div ref={skillRef}>
+        <div>
+          <h1>MY SKILL CARDS</h1>
+        </div>
+        <SkillCards />
+      </div>
+    </Section>
+  );
+};
+```
+
+화면에 들어가면 트리거가 발동하는 `IntersectionObserber` 의 타겟은 **최상위 `div`** 로 설정하고 그 타겟의 직계 자손의 컴포넌트들이 애니메이션에 걸리도록 설정하였습니다.
+
+```jsx
+export const fadeInOutApplier = (delay: number) => (node: HTMLDivElement) => {
+  if (node == null) {
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries: IntersectionObserverEntry[]) => {
+      const sectionEl = entries[0];
+      const childTarget: NodeListOf<HTMLDivElement> =
+        sectionEl.target.querySelectorAll(":scope>div");
+      if (sectionEl.isIntersecting) {
+        childTarget.forEach((target: HTMLDivElement, index: number) => {
+          setTimeout(() => {
+            setHorizontalFadeInAnimation(target, index);
+          }, 500 + delay * index);
+        });
+      } else {
+        childTarget.forEach((target: HTMLDivElement) => {
+          setFadeOut(target);
+        });
+      }
+    },
+    { threshold: 0.8 }
+  );
+
+  const childCollection: NodeListOf<HTMLDivElement> = node.querySelectorAll(":scope>div");
+  childCollection.forEach((target: HTMLDivElement) => {
+    setFadeOut(target);
+  });
+
+  observer.observe(node);
+};
+```
+
+애니메이션의 처리는 처음에는 `opacity:0` 으로 주어 투명하게 만든 다음 `fadeOut` `fadeIn` 과 같은 애니메이션이 걸리는 클래스를 제어하는 함수들로 대응하여 애니메이션을 주었습니다.
+
+`setTimeout` 으로 딜레이를 걸어서 원하는 시간에 순차적으로 출력되게 구현하였습니다. 그리고 화면에 보이지 않게 되면 다시 opacity:0 으로 만드는 클래스를 적용하여 다시 감추게 만들었습니다.
+
+여기까진 괜찮은데? 문제가 하나 생겼습니다. 그건 바로 출력이 다 되지 않은 상태에서 다른 곳으로 이동해보니 이전에 있던 내용들이 사라지지 않았습니다.
+
+원인을 확인해보니 이유는 단순했습니다.
+
+원래 의도는 …
+
+> `setHorizontalFadeInAnimation()` → `setFadeOut()`
+
+너무 빠르게 이동하게 되어서
+
+> `setFadeOut()` → `setHorizontalFadeInAnimation()`
+
+순서로 동작하게 되었습니다. 그러면 이하의 방식으로 구현이 되어야합니다.
+
+> `setHorizontalFadeInAnimation()` → `await` → `setFadeOut()`
+
+**순서를 보장하도록 한다**는 키워드라면 먼저 떠오르는게 `Promise` 이므로 해당 방식으로 해결하였습니다.
+
+```jsx
+const createPromise = (target: HTMLDivElement, index: number): Promise<""> => {
+    **return new Promise((res) => {
+      setTimeout(() => {
+        setHorizontalFadeInAnimation(target, index);
+        res("");
+      }, 500 + delay * index);
+    });**
+  };
+
+  const observer = new IntersectionObserver(
+    async (entries: IntersectionObserverEntry[]) => {
+      const sectionEl = entries[0];
+      const childTarget: NodeListOf<HTMLDivElement> =
+        sectionEl.target.querySelectorAll(":scope>div");
+      if (sectionEl.isIntersecting) {
+        childTarget.forEach((target: HTMLDivElement, index: number) => {
+          **promises.push(createPromise(target, index));**
+        });
+      } else {
+        **await Promise.all(promises);**
+        childTarget.forEach((target: HTMLDivElement) => {
+          setFadeOut(target);
+        });
+      }
+    },
+    { threshold: 0.8 }
+  );
+
+	// ( ...하략 )
+}
+```
+
+위 대로 하면, `setHorizontalFadeInAnimation()` 가 프로미스에 들어가게 되고, 다른 페이지로 이동하게 된다면, 프로미스에 들어간 메소드들이 모두 완료되기까지 기다린 다음에 `setFadeOut()` 가 실행되었습니다.
+
+## 스플래시
+
+진입시 처음 보이는 화면은 리액트의 `Suspense` 를 활용하였습니다. 처음에 보이는 화면은 로딩 화면으로 활용할 수도 있으므로 `page.tsx` 와 동일한 곳에 `loading.tsx` 를 넣어서 해결할 수 있었습니다.
+
+`app/page.tsx`
+
+```jsx
+export default async function Home() {
+  const promise = new Promise((res) => {
+    setTimeout(() => {
+      res(true);
+    }, splashTime);
+  });
+
+  const data = await promise.then();
+
+  return data && <MainComponent />;
+}
+```
+
+그런데?? 테스트 해보았을 땐 문제 없었지만 **amplify 에 배포한 후에 스플래시가 안보이는 문제**가 일어났습니다.
+
+원인은 조금만 생각해보면 알 수 있다. `page.tsx` 는 서버 컴포넌트인데 **[NextJS 공식문서](https://nextjs.org/docs/app/building-your-application/caching#request-memoization)**를 보면, 서버 컴포넌트에서 요청한 메소드 응답은 빌드시 만약 **변동이 없다고 인지**하면 응답은 캐싱된다고 한다. 그러므로 요청 응답이 완료까지 기다릴 필요가 없어졌으므로 로딩화면을 보여주지 않고 있었다.
+
+너무 빠르게 만들어야 하는 nextJS 의 지향점이 오히려 발목을 잡은 셈이다. 개발환경에선 strict 모드를 사용중이므로 캐싱이 일어나지 않아서 인지하기가 어려운 문제다.
+
+그러므로 `**page.tsx`를 서버사이드 컴포넌트로 변경\*\*하고 호출을 하는 동안 로딩화면이 나오도록 구성했습니다.
+
+`app/page.tsx`
+
+```tsx
+**"use client";**
+import MainComponent from "@/components";
+import { splashTime } from "./loadingControlOption";
+
+let promise: Promise<any> | undefined;
+let promiseStatus: "fulfilled" | "rejected" | "pending" = "pending";
+let promiseValue: any;
+
+export default function Home() {
+  wrapPromise();
+  return promiseValue && <MainComponent />;
+}
+
+function wrapPromise() {
+  if (!promise) {
+    promise = new Promise((res) => {
+      setTimeout(() => {
+        res("TRUE");
+      }, splashTime);
+    });
+  }
+
+  if (promiseStatus === "fulfilled") {
+    return promiseValue;
+  } else {
+    promiseStatus = "pending";
+    promise.then((result) => {
+      promiseStatus = "fulfilled";
+      promiseValue = result;
+    });
+  }
+  throw promise;
+}
+```
+
+구조가 다소 복잡해 보이지만 순서는 아래와 같습니다.
+
+1. `wrapPromise` 가 실행되어 특정 시간동안 pending 이 되도록 setTimeout 이 걸린 프로미스를 생성하여 전역 변수 `promise` 에 할당.
+
+   전역변수로 하는 이유는 `throw promise` 가 실행되면서 `wrapPromise` 가 다시 실행되는데 전역으로 두지 않으면 참조할 곳이 없어서 끝없이 실행되기 때문입니다.
+
+2. 처음에는 `fulfilled` 가 아니므로 `promise`의 콜백 함수 설정.
+3. `throw promise`가 `splashTime` 만큼 타이머가 지나고 실행되어 `wrapPromise` 재실행.
+4. `promiseStatus = "fulfilled"` 이므로 해당 값이 리턴되며 실행이 종료.
+5. Home 의 promiseValue 가 이제 프로미스가 완료된 값이 되었으므로 서스팬스가 끝나고`<MainComponent />` 가 출력.
+
+이제 수정된 내용을 실제 환경에 배포하니 의도대로 실행되고 있다.
+
+---
+
+# TODOS
+
+## 디자인이 별로다!! 🫣
+
+- 애니메이션을 추가할까?
+- 레이아웃을 바꿔볼까?
+
+## 구체적인 내용들
+
+- 시멘틱 태그를 최대한 넣어보기.
+- 현재 위치가 어딘지 표시하는 네비게이션 기능.
+- 어드민 기능으로 배포 없이 내용을 수정할 수 있을까?
+- 카드에 반짝이는 효과 넣어보기.
+
+반응형 수정은 더 나중에 생각해보는데, 슬라이드 형식이므로 레이아웃부터 리뉴얼을 해야 할 것 같다.
