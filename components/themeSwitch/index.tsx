@@ -5,7 +5,6 @@ import React from "react";
 
 const ThemeSwitch = (): JSX.Element => {
   const { theme, setTheme, systemTheme } = useTheme();
-  console.log();
   const getSystemTheme = (theme: string | undefined) => {
     if (theme === "system") {
       return systemTheme;
