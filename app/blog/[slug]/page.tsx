@@ -9,7 +9,6 @@ const getPost = (id: string) => {
 const BlogPostPage = ({ params }: { params: { slug: string } }) => {
   const id: string = String(params.slug);
   const post = getPost(id);
-  // console.log(post.body);
   return <PostComponent code={post.body.code} />;
 };
 

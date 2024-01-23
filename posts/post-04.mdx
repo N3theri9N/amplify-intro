@@ -15,7 +15,7 @@ date: 2024-01-21
 - 스타일 : **Tailwindcss** 3.3.0, **CSSModule**
 </aside> 
 
-![lightHouse 측정 결과](%E1%84%91%E1%85%A9%E1%84%90%E1%85%B3%E1%84%91%E1%85%A9%E1%86%AF%E1%84%85%E1%85%B5%E1%84%8B%E1%85%A9%20%E1%84%8C%E1%85%A6%E1%84%8C%E1%85%A1%E1%86%A8%20%E1%84%87%E1%85%B5%E1%84%92%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%83%E1%85%B3%2047d67ae7f4b34c7aa8ed52aacf8d65f2/Untitled.png)
+![lightHouse 측정 결과](https://nnea5215.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fb67b8caf-0e30-4e9a-b6db-84175dd949a3%2F165f897c-416c-42e0-9b9b-bfc849edce25%2FUntitled.png?table=block&id=c0c7750d-9b60-4b1a-903e-b3ac7bfd186b&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&userId=&cache=v2)
 
 lightHouse 측정 결과
 
@@ -46,7 +46,7 @@ const MainComponent = (): JSX.Element => {
 
 ```css
 .slides {
-  height: 100vh;
+  height: 100vh;  
   width: 100%;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
@@ -65,10 +65,10 @@ import styles from "./Main.module.css";
 import { ScrollWheelAdjust } from "./adjustScroll";
 
 const MainComponent = (): JSX.Element => {
-	**const divRefCallback = useCallback(ScrollWheelAdjust, []);**
+	const divRefCallback = useCallback(ScrollWheelAdjust, []);
 
 	return (
-		<div className={`${styles.slides}`} **ref={divRefCallback}**>
+		<div className={`${styles.slides}`} ref={divRefCallback}>
 			<section className="snap-start" />
 			<section className="snap-start" />
 			<section className="snap-start" />
@@ -185,12 +185,12 @@ export const fadeInOutApplier = (delay: number) => (node: HTMLDivElement) => {
 
 ```jsx
 const createPromise = (target: HTMLDivElement, index: number): Promise<""> => {
-    **return new Promise((res) => {
+    return new Promise((res) => {
       setTimeout(() => {
         setHorizontalFadeInAnimation(target, index);
         res("");
       }, 500 + delay * index);
-    });**
+    });
   };
 
   const observer = new IntersectionObserver(
@@ -200,10 +200,10 @@ const createPromise = (target: HTMLDivElement, index: number): Promise<""> => {
         sectionEl.target.querySelectorAll(":scope>div");
       if (sectionEl.isIntersecting) {
         childTarget.forEach((target: HTMLDivElement, index: number) => {
-          **promises.push(createPromise(target, index));**
+          promises.push(createPromise(target, index));
         });
       } else {
-        **await Promise.all(promises);**
+        await Promise.all(promises);
         childTarget.forEach((target: HTMLDivElement) => {
           setFadeOut(target);
         });
@@ -240,16 +240,16 @@ export default async function Home() {
 
 그런데?? 테스트 해보았을 땐 문제 없었지만 **amplify 에 배포한 후에 스플래시가 안보이는 문제**가 일어났습니다.
 
-원인은 조금만 생각해보면 알 수 있다. `page.tsx` 는 서버 컴포넌트인데 **[NextJS 공식문서](https://nextjs.org/docs/app/building-your-application/caching#request-memoization)**를 보면, 서버 컴포넌트에서 요청한 메소드 응답은 빌드시 만약 **변동이 없다고 인지**하면 응답은 캐싱된다고 한다. 그러므로 요청 응답이 완료까지 기다릴 필요가 없어졌으므로 로딩화면을 보여주지 않고 있었다.
+원인은 조금만 생각해보면 알 수 있다. `page.tsx` 는 서버 컴포넌트인데 [NextJS 공식문서](https://nextjs.org/docs/app/building-your-application/caching#request-memoization)를 보면, 서버 컴포넌트에서 요청한 메소드 응답은 빌드시 만약 **변동이 없다고 인지**하면 응답은 캐싱된다고 한다. 그러므로 요청 응답이 완료까지 기다릴 필요가 없어졌으므로 로딩화면을 보여주지 않고 있었다.
 
 너무 빠르게 만들어야 하는 nextJS 의 지향점이 오히려 발목을 잡은 셈이다. 개발환경에선 strict 모드를 사용중이므로 캐싱이 일어나지 않아서 인지하기가 어려운 문제다.
 
-그러므로 `**page.tsx`를 서버사이드 컴포넌트로 변경\*\*하고 호출을 하는 동안 로딩화면이 나오도록 구성했습니다.
+그러므로 **`page.tsx`를 서버사이드 컴포넌트로 변경**하고 호출을 하는 동안 로딩화면이 나오도록 구성했습니다.
 
 `app/page.tsx`
 
 ```tsx
-**"use client";**
+"use client";
 import MainComponent from "@/components";
 import { splashTime } from "./loadingControlOption";
 
