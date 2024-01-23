@@ -1,0 +1,53 @@
+.post h1 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+.post h2 {
+  margin-top: 1.4rem;
+}
+.post > * {
+  margin: 1rem 0px;
+}
+
+.post aside {
+  border-width: 2px;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.post > p:first-of-type {
+  opacity: 50%;
+}
+
+.post aside p {
+  margin-top: 0px;
+  margin-bottom: 0.5rem;
+}
+.post ul {
+  margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 2px;
+  list-style-type: disc;
+  list-style-position: inside;
+}
+.post p code {
+  background: rgba(135, 131, 120, 0.15);
+  color: #eb5757;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.post pre {
+  background: rgba(135, 131, 120, 0.15);
+  border-radius: 4px;
+  padding: 2rem;
+  overflow-x: auto;
+}
+
+.post blockquote {
+}
+
+.post ol {
+  list-style: decimal;
+  margin-left: 2rem;
+}

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={clsx(suit.className)}>
-      <body>
+      <body className="bg-white dark:bg-slate-900">
         <ThemeProviderComp>
           {/* <Suspense fallback={<Loading />}> */}
           {children}
