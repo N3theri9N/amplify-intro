@@ -72,7 +72,13 @@ function TitlePanel(): JSX.Element {
 }
 
 function PostCard(post: Post) {
-  const tags: string[] = post.tag?.split(",").sort() as string[];
+  const tagData: string | undefined = post.tag;
+  const tagStr: string = typeof tagData === "undefined" ? "" : tagData;
+  const tagArr: string[] = tagStr
+    .split(",")
+    .map((i) => i.trim())
+    .filter((i) => i)
+    .sort() as string[];
   return (
     <article className="px-2 py-4 border-b-2 border-opacity-50">
       <h2 className="mb-1 text-xl">
@@ -82,23 +88,22 @@ function PostCard(post: Post) {
       </h2>
       <div className="flex justify-between items-center h-6">
         <div>
-          {tags.length > 0 &&
-            tags.map((tagName) => {
-              return (
-                <Link
-                  href={{
-                    pathname: "/blog",
-                    query: {
-                      tag: tagName.toLowerCase(),
-                    },
-                  }}
-                  className="border-2 mr-2 p-1 text-xs rounded-lg"
-                  key={tagName}
-                >
-                  {tagName}
-                </Link>
-              );
-            })}
+          {tagArr.map((tagName) => {
+            return (
+              <Link
+                href={{
+                  pathname: "/blog",
+                  query: {
+                    tag: tagName.toLowerCase(),
+                  },
+                }}
+                className="border-2 mr-2 p-1 text-xs rounded-lg"
+                key={tagName}
+              >
+                {tagName}
+              </Link>
+            );
+          })}
         </div>
         <time dateTime={post.date} className="block text-xs opacity-50">
           {format(parseISO(post.date), "yyyy-MM-dd")}
