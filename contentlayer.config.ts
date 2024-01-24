@@ -10,6 +10,7 @@ export const Post = defineDocumentType(() => ({
   fields: {
     title: { type: "string", required: true },
     date: { type: "date", required: true },
+    tag: { type: "string" },
   },
   computedFields: {
     url: { type: "string", resolve: (post) => `/blog/${post._raw.flattenedPath}/` },
@@ -27,6 +28,7 @@ export default makeSource({
         rehypePrettyCode,
         {
           theme: "github-dark",
+          keepBackground: true,
         },
       ],
     ] as Pluggable[],

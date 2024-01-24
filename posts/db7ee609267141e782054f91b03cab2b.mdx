@@ -1,0 +1,186 @@
+---
+title: NextJS 13
+date: 2022-10-28
+tag: NextJS, FrontEnd
+---
+
+# NextJS 13
+
+생성 일시: 2022년 10월 28일 오후 8:21
+
+출처 : [https://nextjs.org/blog/next-13](https://nextjs.org/blog/next-13)
+
+2022년 10월 26일에 nextJS 13 이 발표되었다.
+
+업데이트 명령어
+
+`npm i next@latest react@latest react-dom@latest eslint-config-next@latest`
+
+## `app/` 디렉토리 ( beta )
+
+자동 라우트를 지원하는 Next.js 에서 새로이 추가된 기능으로 기존 pages 디렉토리로 아무런 설정파일 없이 `index.js` 를 넣어주면 라우팅이 지원되었다.
+
+이제 **`app/`** 디렉토리 이하에 넣으면 신 기능이 도입된 라우팅이 가능해진다. **단 페이지 라우팅하려면 `page.js` 라고 명시해야한다.**
+
+<aside>
+💡 신규 기능은 아래와 같다.
+
+- Layout : 경로간 UI 공유
+- Server Component : 동적인 애플리케이션을 위한 서버 행동이 먼저인 컴포넌트
+- Streaming : 점진적으로 스트리밍하는 UI
+- Support for Data Fetching : async 서버 컴포넌트와 확장된 컴포넌트 레벨의 fetch API 기능을 제공한다.
+</aside>
+
+### Layouts
+
+![](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F81be5325-b7cd-46c3-bdb3-a4eff75dc599%2FUntitled.png?table=block&id=c40795bd-8ddb-4366-a4bc-32edfc4eb0dc&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&width=1920&userId=6129882c-fb78-4471-a25e-d9e686069e4c&cache=v2)
+
+`app/` 디렉토리 이하의 `layout.js` 파일은 여러 페이지에서 공유를 한다. 이 컴포넌트는 상태가 그대로 유지되며 **리렌더링 되지 않는다.** 말 그대로 저렇게 선언만 하면 다른 페이지에도 동일한 레이아웃 컴포넌트가 출력된다.
+
+상세 설명 : [https://beta.nextjs.org/docs/routing/fundamentals#special-files](https://beta.nextjs.org/docs/routing/fundamentals#special-files)
+
+### Server Component
+
+`app/` 디렉토리는 React의 새로운 서버 구성요소 아키텍쳐를 지원한다.
+
+경로가 로드되면 캐시 가능하고 크기를 예측할 수 있는 `next.js` 및 런타임이 로드되며 응용 프로그램이 커지더라도 길어지진 않는다. 결과적으로 클라이언트 (브라우저) 로의 자바스크립트 호출 용량이 줄어들며 첫 페이지 로딩을 줄일 수 있다.
+
+상세설명 : [https://beta.nextjs.org/docs/rendering/server-and-client-components](https://beta.nextjs.org/docs/rendering/server-and-client-components)
+
+### Streaming
+
+`app/` 디렉토리는 클라이언트에 렌더링 된 UI 를 점진적으로 렌더링 하도록 할 수 있다.
+
+서버 컴포넌트랑 중첩된 layout 이면, 특별히 데이터가 필요하지 않은 페이지의 일부는 즉시 로딩 상태를 렌더링하게 한다. 이러면 사용자는 전체 페이지가 로드 되기 까지 기다릴 필요가 없어진다.
+
+상세설명 : [https://beta.nextjs.org/docs/data-fetching/fundamentals#streaming-and-suspense](https://beta.nextjs.org/docs/data-fetching/fundamentals#streaming-and-suspense)
+
+### Data Fetching
+
+```jsx
+// app/page.js
+async function getData() {
+  const res = await fetch("https://api.example.com/...");
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+  return res.json();
+}
+
+// This is an async Server Component
+export default async function Page() {
+  const data = await getData();
+
+  return <main>{/* ... */}</main>;
+}
+```
+
+컴포넌트에서 더 강력하고 새로운 data 를 fetch 하는 방법이랑 promise 를 다루는 방법을 제시한다.
+
+기존 SSG, SSR, ISR 의 모든 장점을 쓸 수 있도록 **한 가지 fetch API 로 합쳐진 기능을 제공**한다. ( 패치, 캐싱, 데이터 재검증 )
+
+```java
+// This request should be cached until manually invalidated.
+// Similar to `getStaticProps`.
+// `force-cache` is the default and can be omitted.
+// 기본 값이다. getStaticProps 랑 비슷하다. ( 빌드 시점에 fetch 함 )
+fetch(URL, { cache: 'force-cache' });
+
+// This request should be refetched on every request.
+// Similar to `getServerSideProps`.
+// 매번 호출때마다 fetch 실행하므로 getServerSideProps 와 유사.
+fetch(URL, { cache: 'no-store' });
+
+// This request should be cached with a lifetime of 10 seconds.
+// Similar to `getStaticProps` with the `revalidate` option.
+// revalidate 옵션을 지정한 getStaticProps 와 유사
+fetch(URL, { next: { revalidate: 10 } });
+```
+
+또한 app 내부에선 `getServerSideProps`, `getStaticProps`,~~그리고 진작히 안쓰는~~ `getInitialProps` 를 사용할 수 없다.
+
+그 동안 `getStaticProps` 와 함께하던 `getStaticPaths` 는 동일한 기능으로 `generateStaticParams` 대체되어 SSG 를 담당한다.
+
+```jsx
+// Return a list of `params` to populate the [slug] dynamic segment
+export function generateStaticParams() {
+  return [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
+}
+
+// Multiple versions of this page will be statically generated
+// using the `params` returned by `generateStaticParams`
+export default function Page({ params }) {
+  const { slug } = params;
+  // ...
+}
+```
+
+**상세 문서 : [https://beta.nextjs.org/docs/data-fetching/fundamentals](https://beta.nextjs.org/docs/data-fetching/fundamentals)**
+
+---
+
+## Turbopack ( alpha )
+
+<aside>
+💬 webpack 의 속도를 빠르게 하는 turbopack 이 도입되었습니다. 3,000 모듈 프로젝트 기준으로 TurboPack 은 부팅되기까지 1.8 초가 소요되었습니다. ( Vite : 11.4초 , Webpack : 16.5초 ) 아직은 알파단계로 next dev, next build 에만 사용 가능합니다.
+
+</aside>
+
+## `next/image` 컴포넌트 ( Stable )
+
+새로운 강력한 이미지 컴포넌트 기능을 지원한다. 레이아웃 변경 없이 이미지를 쉽게 표시하고 온디멘드 방식의 최적화로 성능을 향상시킨다.
+
+**Image** 컴포넌트는 :
+
+- 클라이언트 사이드 JS가 적게 제공
+- 스타일 설정이 쉬워진다.
+- 기본적으로 alt 태그가 필요한 엑세스 용이성 향상
+- 웹 플랫폼 맞게 조정
+- 더 빠름 ( 레이지 로딩이 Hydrate을 요구하지 않음 )
+
+```jsx
+import Image from "next/image";
+import avatar from "./lee.png";
+
+function Home() {
+  // "alt" is now required for improved accessibility
+  // optional: image files can be colocated inside the app/ directory
+  return <Image alt="leeerob" src={avatar} placeholder="blur" />;
+}
+```
+
+상세 문서 : [https://nextjs.org/docs/advanced-features/codemods](https://nextjs.org/docs/advanced-features/codemods)
+
+## `@next/font` 폰트설정
+
+새로운 폰트 시스템을 지원한다.
+
+- 커스텀 폰트를 비롯한 폰트를 자동 최적화한다.
+- 프라이버시와 성능을 위한 외부 네트워크 호출 제거
+- 아무 폰트 파일이든 자동 호이스팅
+- CSS `size-adjust` 속성을 사용하여 자동으로 레이아웃 이동을 0으로 설정가능
+
+이러한 경우로 구글 폰트를 쉽게 사용할 수가 있다. CSS 및 font 파일은 빌드 시간에 다운되고 나머진 정적인 assets 과 함께 자동 호스팅 된다.
+
+```jsx
+import { Inter } from '@next/font/google';
+
+const inter = Inter();
+
+<html className={inter.className}>
+```
+
+커스텀 폰트도 지원한다. 이 역시 자동 호스팅, 캐싱, 프리로딩을 지원한다.
+
+```jsx
+import localFont from '@next/font/local';
+
+const myFont = localFont({ src: './my-font.woff2' });
+
+<html className={myFont.className}>
+```
+
+## `next/link` 컴포넌트 변경사항
+
+next/link 는 더 이상 `<a>` 태그를 필수로 요구하지 않으며
+
+next 13 버전에서 코드를 자동으로 바꿀 수 있도록 `npx @next/codemod new-link ./pages` 를 치면 된다.

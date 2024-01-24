@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  @apply scroll-smooth;
+  @apply scroll-smooth duration-300 transition-[background-color_0.3s];
 }
 
 h1 {
@@ -13,7 +13,9 @@ h1 {
 h2 {
   @apply text-2xl font-semibold;
 }
-
+h3 {
+  @apply text-xl font-semibold;
+}
 main {
   @apply text-base font-light;
 }
