@@ -4,7 +4,6 @@ import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { Post } from "contentlayer/generated";
 import { useSearchParams } from "next/navigation";
-import clsx from "clsx";
 
 const BlogHome = ({ posts, totalSize }: { posts: Post[]; totalSize: number }) => {
   return (
@@ -23,6 +22,7 @@ const PAGE_SIZE: number = 10;
 function PageComponenet({ totalSize }: { totalSize: number }): JSX.Element {
   const searchParams = useSearchParams();
   const paramPage: string = searchParams.get("page") ?? "0";
+  const paramTag: string = searchParams.get("tag") ?? "";
   const totalPage: number = Math.ceil(totalSize / PAGE_SIZE);
   return (
     <div className="px-auto mx-auto flex items-center">
@@ -39,7 +39,14 @@ function PageComponenet({ totalSize }: { totalSize: number }): JSX.Element {
           );
         } else {
           return (
-            <Link href={`/blog?page=${index}`} key={`page_` + page} className={"mx-2 text-sm"}>
+            <Link
+              href={{
+                pathname: "/blog",
+                query: { page: index, tag: paramTag },
+              }}
+              key={`page_` + page}
+              className={"mx-2 text-sm"}
+            >
               {page}
             </Link>
           );
@@ -58,8 +65,7 @@ function TitlePanel(): JSX.Element {
       <div className="text-xl">TODOS : </div>
       <ul className="list-disc list-inside">
         <li>기존 Notion 포스트를 MDX 로 이전</li>
-        <li>태그 기능</li>
-        <li>검색 기능</li>
+        <li>태그 및 검색 기능</li>
       </ul>
     </div>
   );
@@ -70,9 +76,8 @@ function PostCard(post: Post) {
     ?.split(",")
     .map((i) => i.trim())
     .sort() as string[];
-  console.log(tags);
   return (
-    <article className="p-2 border-2 rounded-xl border-opacity-50">
+    <article className="px-2 py-4 border-b-2 border-opacity-50">
       <h2 className="mb-1 text-xl">
         <Link href={post.url} className="text-blue-700 hover:text-blue-900  dark:text-blue-400">
           {post.title}
@@ -83,9 +88,18 @@ function PostCard(post: Post) {
           {tags.toString().length > 0 &&
             tags.map((tagName) => {
               return (
-                <span className="border-2 mr-2 p-1 text-xs rounded-lg" key={tagName}>
+                <Link
+                  href={{
+                    pathname: "/blog",
+                    query: {
+                      tag: tagName.toLowerCase(),
+                    },
+                  }}
+                  className="border-2 mr-2 p-1 text-xs rounded-lg"
+                  key={tagName}
+                >
                   {tagName}
-                </span>
+                </Link>
               );
             })}
         </div>
