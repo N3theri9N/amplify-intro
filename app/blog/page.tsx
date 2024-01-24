@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 const PAGE_SIZE: number = 10;
 
-function getFilteredPosts(tag: string): Post[] {
+function getFilteredPosts(tag: string = ""): Post[] {
   const regex = new RegExp(tag);
   const filteredPosts = allPosts
     .filter((item) => {
