@@ -73,7 +73,7 @@ function TitlePanel(): JSX.Element {
 
 function PostCard(post: Post) {
   const tagData: string | undefined = post.tag;
-  const tagStr: string = typeof tagData === "undefined" ? "" : tagData;
+  const tagStr: string = typeof tagData === "string" ? tagData : "";
   const tagArr: string[] = tagStr
     .split(",")
     .map((i) => i.trim())
