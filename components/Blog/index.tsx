@@ -66,6 +66,11 @@ function TitlePanel(): JSX.Element {
 }
 
 function PostCard(post: Post) {
+  const tags: string[] = post.tag
+    ?.split(",")
+    .map((i) => i.trim())
+    .sort() as string[];
+  console.log(tags);
   return (
     <article className="p-2 border-2 rounded-xl border-opacity-50">
       <h2 className="mb-1 text-xl">
@@ -75,11 +80,8 @@ function PostCard(post: Post) {
       </h2>
       <div className="flex justify-between items-center h-6">
         <div>
-          {post.tag
-            ?.split(",")
-            .sort()
-            .map((tagName) => {
-              tagName = tagName.trim();
+          {tags.toString().length > 0 &&
+            tags.map((tagName) => {
               return (
                 <span className="border-2 mr-2 p-1 text-xs rounded-lg" key={tagName}>
                   {tagName}
