@@ -1,5 +1,6 @@
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
 import { Pluggable } from "unified";
+import rehypeSlug from "rehype-slug";
 import rehypePrettyCode from "rehype-pretty-code";
 
 export const Post = defineDocumentType(() => ({
@@ -24,6 +25,7 @@ export default makeSource({
   mdx: {
     remarkPlugins: [],
     rehypePlugins: [
+      rehypeSlug,
       [
         rehypePrettyCode,
         {
