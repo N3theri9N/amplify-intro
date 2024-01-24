@@ -1,0 +1,50 @@
+---
+title: 프로토타입
+date: 2024-01-01
+tag: JavaScript
+---
+
+# 프로토타입
+
+생성 일시: 2024년 1월 1일 오후 4:59
+
+JavaScript 에서는 객체를 상속하기 위해 일부 템플릿의 기능을 갖춘 프로토타입을 통해 상속받아서 기능들이 동작한다.
+
+일례로 자바스크립트에서는 실질적으로는 Array가 존재하지 않는다. 자바스크립트에서의 Array 는 원래 객체였으나 `indexOf`, `Push`, `Pop` 과 같은 기능들의 인터페이스를 상속 받아, Array 처럼 동작하게 만든 것이다.
+
+```jsx
+/**
+ * @param {number[]} nums
+ * @return {void}
+ */
+var ArrayWrapper = function (nums) {
+  this.nums = nums;
+};
+
+/**
+ * @return {number}
+ */
+ArrayWrapper.prototype.valueOf = function () {
+  return this.nums.reduce((sum, num) => sum + num, 0);
+};
+
+/**
+ * @return {string}
+ */
+ArrayWrapper.prototype.toString = function () {
+  return `[${this.nums.join(",")}]`;
+};
+
+/**
+ * const obj1 = new ArrayWrapper([1,2]);
+ * const obj2 = new ArrayWrapper([3,4]);
+ * obj1 + obj2; // 10
+ * String(obj1); // "[1,2]"
+ * String(obj2); // "[3,4]"
+ */
+```
+
+아래처럼 객체의 프로토타입을 선언하여 기존에 작동하던 것을 바꿀 수 있다. 예를 든다면,
+
+- `prototype.valueOf` 는 +, - 와 같은 연산에 사용될 때 객체의 값으로 반환된다.
+- `prototype.toString` 은 `string()` 으로 객체를 텍스트로 변경할 때 사용되는 프로토타입이다.

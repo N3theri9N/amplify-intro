@@ -1,51 +1,25 @@
-import Link from "next/link";
-import { compareDesc, format, parseISO } from "date-fns";
-import { allPosts, Post } from "contentlayer/generated";
+import { compareDesc } from "date-fns";
+import { allPosts } from "contentlayer/generated";
+import { Metadata } from "next";
+import BlogHome from "@/components/Blog";
 
-function PostCard(post: Post) {
-  return (
-    <article className="py-2 border-b-2 border-opacity-50">
-      <h2 className="mb-1 text-xl">
-        <Link href={post.url} className="text-blue-700 hover:text-blue-900 dark:text-blue-400">
-          {post.title}
-        </Link>
-      </h2>
-      <div className="flex justify-between align-center">
-        <div>
-          {post.tag?.split(",").map((tagName) => {
-            tagName = tagName.trim();
-            return (
-              <span className="border-2 mr-2 p-1 text-xs rounded-lg" key={tagName}>
-                {tagName}
-              </span>
-            );
-          })}
-        </div>
-        <time dateTime={post.date} className="block text-xs opacity-50">
-          {/* {format(parseISO(post.date), "LLLL d, yyyy")} */}
-          {format(parseISO(post.date), "yyyy-MM-d")}
-        </time>
-      </div>
-    </article>
-  );
-}
+export const metadata: Metadata = {
+  title: "RHP의 블로그",
+  // metadataBase: new URL("/blog"),
+  description: "현재 블로그는 얼리엑세스 버전입니다. 추후에 주요 기능들이 추가될 예정입니다.",
+  openGraph: {
+    images: "",
+    title: "RHP의 블로그",
+    description: "현재 블로그는 얼리엑세스 버전입니다. 추후에 주요 기능들이 추가될 예정입니다.",
+  },
+};
 
-export default function Blog() {
-  const posts = allPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
+const PAGE_SIZE: number = 10;
 
-  return (
-    <main className="flex flex-col gap-4">
-      <div className="p-4 rounded-xl border-2">
-        <div className="text-xl font-bold">현재 블로그 공사중입니다.</div>
-        <div className="text-xl">TODOS : </div>
-        <ul className="list-disc list-inside">
-          <li>기존 Notion 포스트를 MDX 로 이전</li>
-          <li>메인페이지 꾸미기</li>
-        </ul>
-      </div>
-      {posts.map((post, idx) => (
-        <PostCard key={idx} {...post} />
-      ))}
-    </main>
-  );
+export default function Blog({ searchParams }: { searchParams: { page?: number; tag?: string } }) {
+  const { page = 0, tag = "" } = searchParams;
+  const sortedPosts = allPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
+  const posts = sortedPosts.slice(PAGE_SIZE * page, PAGE_SIZE * (page + 1));
+
+  return <BlogHome posts={posts} totalSize={allPosts.length} />;
 }

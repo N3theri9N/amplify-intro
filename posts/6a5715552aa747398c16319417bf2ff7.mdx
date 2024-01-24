@@ -1,0 +1,95 @@
+---
+title : Vuejs, React 배우기 전에 꼭 알아야 하는 지식
+date: 2022-06-23
+tag: JavaScript, FrontEnd
+---
+
+# Vuejs, React 배우기 전에 꼭 알아야 하는 지식
+
+생성 일시: 2022년 6월 23일 오후 1:22
+
+인프런 강의 **[프론트 엔드 날개 달기: Vuejs, React 배우기 전에 꼭 알아야 하는 지식](https://www.inflearn.com/course/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C-%EB%82%A0%EA%B0%9C%EB%8B%AC%EA%B8%B0/dashboard)** 을 강의한 내용을 담았습니다. 몰랐거나, 잊기 쉬운 개념은 이곳에 정리합니다.
+
+---
+
+## BOM
+
+**Browser Object Model | 브라우저 객체 모델**
+
+웹 브라우저를 자바스크립트에서 제어하기 위한 객체이다. 객체 종류는 다음과 같다
+
+- window : 최상위 객체, **모든 객체가 소속된 객체**이다. 아래의 객체를 모두 포함한다.
+    - document : 현재 문서에 대한 정보
+    - history : 현재의 브라우저가 접근하던 URL 이력을 제어
+    - location : 문서의 주소를 다루는 객체, window 객체와 document 객체의 prop이다.
+    - screen : 사용자 디스플레이 화면에 대한 정보
+    - navigator : 실행중인 앱에 대한 정보이며 크로스 브라우징 이슈를 해결할 때 사용
+    
+
+### window
+
+![](https://file.notion.so/f/f/b67b8caf-0e30-4e9a-b6db-84175dd949a3/6fb64ed0-e4e8-46d5-868a-8b13f50ef883/Untitled.png?id=6ec06fbe-715d-4217-81fd-99e12e78e6ff&table=block&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&expirationTimestamp=1706169600000&signature=UqStsRAlLFOJZ6AxD2bGZBGW_PqE7hj_AeIwln4Z07A&downloadName=Untitled.png)
+
+`window.open(${url})`, `window.close()` 창의 열기, 닫기를 제어한다. `prompt` ,`alert`, `console` 또한 window 에 들어있는 객체이다.
+
+### document
+
+![](https://file.notion.so/f/f/b67b8caf-0e30-4e9a-b6db-84175dd949a3/af1ddae0-48a1-415d-8712-0142bc30bd96/Untitled.png?id=4f4ead01-b855-494c-b9f5-43a6182012ad&table=block&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&expirationTimestamp=1706169600000&signature=Ep9qiQf_RGk2Cwh0E8xBVL5shdVojrrERUAL5FfeWe0&downloadName=Untitled.png)
+
+현재 웹 문서 구성에 대한 내용으로 **DOM 객체**이다. `document.queryselector(”#custom-id”)` 와 같은 접근자를 지원한다.
+
+### location
+
+![](https://file.notion.so/f/f/b67b8caf-0e30-4e9a-b6db-84175dd949a3/b1d04551-db1b-4a17-9090-392ce38566f0/Untitled.png?id=7be1938c-18db-44d3-b147-777300bb9c61&table=block&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&expirationTimestamp=1706169600000&signature=CJSXWDW9mA1l6kdximDrprrL5eHDvk7kestW7mW-Frs&downloadName=Untitled.png)
+
+현재 웹 문서의 주소를 다루는 객체이다. `window.location`,`document.location`, `location` 으로 접근 가능하다. `location.host` 로 현재 도메인의 이름을, `location.href` 로 현재 주소를 출력한다.
+
+### screen
+
+![](https://file.notion.so/f/f/b67b8caf-0e30-4e9a-b6db-84175dd949a3/7ad729c7-a925-4ed8-8d0e-0c80349d1704/Untitled.png?id=760786a3-68c5-4965-bf7d-487b1c2b9c1f&table=block&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&expirationTimestamp=1706169600000&signature=1EZN_qdyVXZBYPxmzeXlcybWPQres31Q6GTLZ47_oeQ&downloadName=Untitled.png)
+
+사용자의 디스플레이 관련 객체이다. 어디서 보고 있냐에 따라서 달라진다.
+
+### navigator
+
+![](https://nnea5215.notion.site/signed/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F1e68d408-dd65-4678-a313-8b6088d1037a%2FUntitled.png?table=block&id=b72606a0-6e79-49fa-8b85-913ce10242fc&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&name=Untitled.png&cache=v2)
+
+현재 실행 중인 앱에 대한 정보를 출력한다. 위치 정보, 웹 브라우저 이름, 현재 언어 등등의 정보가 기록되어있다. 그 중 크로스 브라우징 이슈에 주로 사용하는 것이 `navigator.userAgent` 이다
+
+---
+
+## Load, Defer, Async
+
+자바스크립트 파일을 효과적으로 가져오는 방법을 다룬다.
+
+### `<script>`
+
+![](https://file.notion.so/f/f/b67b8caf-0e30-4e9a-b6db-84175dd949a3/ba154e8f-3827-4720-bb74-a8f36a12bb85/Untitled.png?id=e11d677d-2734-4a78-b67a-73b2310aa557&table=block&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&expirationTimestamp=1706169600000&signature=FpgLe3Obso6teGdRNoao89tMMTYfwaC8t8t8z4qgfBI&downloadName=Untitled.png)
+
+Html 에서는 `<script>` 태그를 통해 자바스크립트 파일을 불러들인다. 브라우저에서는 index.html 파일을 보게되면 **위에서부터 아래로 읽어들인다. `<script>`** 태그를 만나면 하던 작업을 멈추고 스크립트 리소스를 가져오고 **스크립트를 실행까지 한다**.
+
+querySelector 로 찾을 태그가 parsing 되기 전에 스크립트를 부를 경우 분명 index.html 에서는 요소가 있지만 스크립트에서는 찾지 못하는 일이 발생한다. 
+
+그러므로 `<script>` 태그는 주로 `</body>` 종료태그 바로 위에 넣는다. 
+
+### window.onload
+
+Html 파싱, DOM 그리고 외부 컨텐츠( CSS, script, img 등등 )가 로드된 후 발생하는 이벤트이다. 그러므로 모든 컴포넌트가 있을 때 참조할 수 있다. 
+
+이 이벤트 리스너에 선언한 건 중간에 선언된 Script 일지라도 즉시 실행되지 않고 나중에 실행된다. 
+
+### DOMContentLoaded
+
+DOM 생성후 즉시 발생하는 이벤트이다. `document.addEventListener('DOMContentLoaded', function(){})` 으로 선언한다.
+
+### Defer prop
+
+`<script>` 태그에 defer 속성을 넣으면 **HTML 파싱이 완료된 후** JavaScript 코드를 실행한다.
+
+```jsx
+<script src='script.js' defer></script>
+```
+
+### Async prop
+
+이 속성을 넣으면 비동기로 javaScript 파일을 불러들인다. 즉 이 스크립트를 실행하는 중엔 HTML 파싱이 중단된다. 그런데 이는 제어가 어려워서 권장하지 않는다.
