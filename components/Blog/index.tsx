@@ -72,10 +72,7 @@ function TitlePanel(): JSX.Element {
 }
 
 function PostCard(post: Post) {
-  const tags: string[] = post.tag
-    ?.split(",")
-    .map((i) => i.trim())
-    .sort() as string[];
+  const tags: string[] = post.tag?.split(",").sort() as string[];
   return (
     <article className="px-2 py-4 border-b-2 border-opacity-50">
       <h2 className="mb-1 text-xl">
@@ -85,7 +82,7 @@ function PostCard(post: Post) {
       </h2>
       <div className="flex justify-between items-center h-6">
         <div>
-          {tags.toString().length > 0 &&
+          {tags.length > 0 &&
             tags.map((tagName) => {
               return (
                 <Link
