@@ -10,7 +10,11 @@ export default function BlogLayout({ children }: { children: ReactNode }) {
         <Link href="/blog">
           <h1 className="text-center mb-0 text-2xl font-black">Reversed_hp</h1>
         </Link>
-        <ThemeSwitch />
+
+        <div className="flex items-center gap-x-2">
+          <Link href="/">INTRO</Link>
+          <ThemeSwitch />
+        </div>
       </header>
       <div className="h-[65px]"></div>
       <div className={`mx-auto max-w-[800px] px-5 py-8`}>{children}</div>

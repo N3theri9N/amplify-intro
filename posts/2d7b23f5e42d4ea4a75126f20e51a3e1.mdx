@@ -1,0 +1,159 @@
+---
+/*미완성*/
+---
+
+# Modern JavaScript
+
+생성 일시: 2022년 9월 5일 오후 5:13
+
+# 배경
+
+<aside>
+🎞️  **자바스크립트의 역사**
+
+- 1997년 자바스크립트 초판 출범 ( ES1 )
+- 1998년 ES2 : ISO, IEC 16262 국제 표준과 동일한 규격 적용
+- 1999년 ES3 : 정규식, try/catch 예외처리 추가.
+- 2009년 ES5 : HTML5 와 함께 나온 표준안이며 JSON, strictmode, 접근자, 배열조작 등등 추가.
+- 2015년 ES6 : let, const, class 화살표함수, 템플릿, 리터럴, 스프레드, rest 파라미터, Promist, 람다식, 모듈 등등
+- 2016년 ES7 : 지수, 프로토타입
+- 2017년 ES8 : async/await Object 정적 메소드, 엔티티 등
+</aside>
+
+특히 자바스크립트 표준 명세인 ECMAScript 를 통해 나온 ES5 이후에는 모바일 브라우저 시대가 도래한 후 다양한 브라우저에 대한 가이드 라인을 따르도록 자바스크립트 엔진을 구현할 수 있도록 도입이 되었고, ES6 이후는 매년 기능을 추가하여 발표하고 있다.
+
+> **현재 대부분의 모던 인터넷 브라우저는 ES6 를 지원하여, 모던 자바스크립트를 가르킨다면 ES6 를 지칭한다.**
+> 
+
+IE 와 같은 구형 브라우저는 ES6 를 지원하지 않아, Webpack 과 같은 모듈번들러 혹은 babel 과 같은 트랜스파일러로 ES5 이하 버전으로 다운그레이드를 하는 방법을 사용해야한다.
+
+---
+
+# ES6의 특징
+
+## 변수키워드 let, const
+
+이전까지만해도 `var` 로만 선언 혹은 아무것도 쓰지 않아도 변수가 선언되었다. `var` 의 단점이면 밑에서 선언한 변수가 위에서 끌어올려져서 사용이 가능하다던가(호이스팅), 이미 선언된 변수 이름으로 선언해도 아무 문제가 없다.
+
+```jsx
+console.log(a) // 1
+var a = 1;
+```
+
+```jsx
+var a = 1;
+var a = 2; // no problem
+```
+
+여기서 새로 생긴 변수 선원키워드로 let 과 const 가 있는데 const 는 선언후 값을 바꿀 수 없고 let 은 선언 후 달라질 수 있다. 
+
+`let` 과 `var` 의 차이점은 이미 선언한 변수명으로 let 을 사용할 수 없다.
+
+```jsx
+let a = 1;
+let a = 2; // 'a' has already been declared 
+a = 2; // no problem
+```
+
+const 는 이미 선언 후에 값을 직접 지정해서 바꿀 수는 없지만, 참조 접근형 변수타입의 메소드로 인한 변환은 가능하다. 
+
+```jsx
+const c = 3;
+c = 33 // Assignment to constant variable.
+
+const obj = {};
+obj.a = 1; // no problem
+console.log(obj) // {a: 1}
+```
+
+실제로 사용할땐 대부분의 변수는 `const` 로 정의하며 변화가 필요한 변수일 경우에만 `let`으로 선언한다.
+
+## 화살표 함수
+
+화살표함수는 자바스크립트 함수를 생성하는 또 다른 구문이다.
+
+```jsx
+function myFuc() {
+	...
+}
+```
+
+```jsx
+const myFuc = () => {
+	...
+}
+```
+
+이 구문의 큰 장점은 this 를 사용시 항상 정의한 객체를 가르키게되어 실행 중 갑자기 바뀌지 않는다.
+
+괄호 안에 한 개 이상의 파라미터를 넣어볼 수도 있으며 반드시 괄호로 감싸야하는건 동일하다.
+
+```jsx
+function printMyName ( name, age ) {
+	...
+}
+```
+
+```jsx
+const printMyName = (name, age) => {
+	...
+}
+```
+
+return 을 줄일 수도 있다. 만약 function 내용이 return 뿐이면 가능하다. 아래는 동일하게 작동한다.
+
+```jsx
+const multiply = number => number*2
+```
+
+```jsx
+const multiply = ( number ) => {
+	return number*2;
+}
+```
+
+이렇듯 화살표 함수는 함축적으로 줄일 수 있는게 있어서 유용하게 사용할 수 있음.
+
+## 모듈 import , export
+
+차세대 자바스크립트에서는 모듈 방식의 코드를 작성할 수 있는 기능이 있어서 여러 개의 파일로 코드 분할이 가능하다. 
+
+HTML 파일에 올바른 순서로 코드를 가져오기만 하면 된다. 아래의 자바스크립트 파일이 있고 person 이라는 스크립트 객체가 저장되어있다.
+
+```jsx
+//on person.js
+const person = {
+	name : "max"
+}
+
+**export default** person;
+```
+
+`export default` 키워드를 붙여, person 을 export 한다. default 는 파일에서 어떤 것을 import 하면 항상 default 로 내보낸 것을 기본값으로 가져온단 의미이다.
+
+반면 또 다른 `export`만 하는 파일이 있는데 clean 이란 함수가 있고 또 다른 변수에는 숫자가 들어있다. 
+
+```jsx
+// on utility.js
+**export** const clean = () => { ... }
+**export** const baseData = 10;
+```
+
+ import 구문은 
+
+```jsx
+import person from './person.js'
+import prs from './person.js'
+
+import { baseData, clean as cleanFunction } from './utility.js'
+```
+
+default 로 지정한건 이름이 어떻든 아무 상관이 없다. 반면 default 로 지정하지 않은 건 중괄호로 가져온다.  또한 as 라는 키워드로 자유롭게 별칭을 지정해볼 수도 있다.
+
+## 클래스, 속성, 메소드
+
+## 스프레드
+
+## 구조분해할당
+
+## 참조형, 원시형, 람다식

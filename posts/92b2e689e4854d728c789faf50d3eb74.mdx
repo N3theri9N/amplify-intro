@@ -1,0 +1,430 @@
+---
+title : Jest 입문
+date: 2022-09-10
+tag: Test,FrontEnd
+---
+
+# Jest 입문
+
+생성 일시: 2022년 9월 10일 오후 1:02
+
+**UNIT TESTING**
+
+JEST 공식 문서 : [https://jestjs.io/](https://jestjs.io/)
+
+개발자로서 특정 문제를 해결하기 위해 시험적으로 테스트를 해왔다. 그간 항상 해 왔던 것이고 아프로도 그럴 것이다.
+
+하지만 모든 경우와 조건 대해서 테스트를 하기란 어렵다. 그리고 그 과정에 어떤 속성을 손상 시킬 수도 있으므로, 변경 사항을 방치해두고 그대로 배포할 위험도 존재한다. 그로 인해 추가 작업할 가능성도 있다. ( 실제로 겪어보았고 )
+
+하지만 이를 QA 가 담당할 수동 테스트를 대체하진 않으며, 수정 시 원래 되어야 할 기능이 간과하여 배포되는 것을 막는 것을 최우선 목표로 한다. 
+
+# 자동화 테스트
+
+![](https://nnea5215.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fd9190dd3-cb8b-4ec8-9735-f8a6cab66acf%2FUntitled.png?table=block&id=21c53301-1a34-4960-a5ca-9c51c31ae094&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&width=2000&userId=&cache=v2)
+
+테스트에 관련된 얘기를 하자면 여러 유형이 있다.
+
+- **유닛 테스트 ( Unit Tests )** : 한 개 한 개의 함수를 테스트를 한다. 일부 컴포넌트와 독립적인 테스트. 모든 단위, 함수 및 컴포넌트 테스트를 하는게 좋음. 가장 일반적인 유형
+- **통합 테스트 ( Integration Tests )** : 여러 구성 요소의 조합을 테스트하며, 단위 테스트 만큼 종류가 많지 않음. 다른 컴포넌트들을 재사용 하면서 테스트한다.
+- **전 구간 테스트 ( End-to-End Tests ; a.k.a e2e-Test )** : 전체 시나리오를 테스트. 실제로 사람이 실행할 때 실행 여부를 테스트한다. 모든 것의 자동화나 마찬가지이다. 전체적인 흐름을 다루는 만큼 테스트 수는 가장 적음.
+
+# What? How?
+
+무엇을 어떻게 테스트 하는가?
+
+코드가 다른 도구에 의해 실행되는 방법과 같이 테스팅 코드에 어떤 종류의 코드를 넣을지 고민할 필요가 있음.
+
+- **What** : 앱을 구성하는 가장 작고 집중된 단위로 테스트로 각각 하나의 주요 사항만 테스트한다. 큰 규모의 성공/실패를 측정 한다면 어디서 수정할 지 확인하기가 어려움
+- **How** : 발생할 수 있는 성공 및 오류 사례를 모두 테스트함 드물지만 가능한 시나리오와 결과도 테스트한다. 코드를 작성하기 시작하면 명확해질 것.
+
+# Testing Code
+
+이제 어떻게 테스트 코드를 작성하는가? 이와 
+
+1. 일단 테스팅 코드를 작성하기 위한 툴이 필요하다. → Jest 라이브러리 
+2. React App과 컴포넌트를 가상의 브라우저에 시뮬레이팅 하는 방법을 구현한다. → React Testing 라이브러리
+
+이 2개의 라이브러리는 모두 create-react-app 으로 설치할 때 이미 같이 설치된다. ( 없어도 쉽게 설치가 가능하다 )
+
+```jsx
+"dependencies": {
+    **"@testing-library/jest-dom": "5.16.5",
+    "@testing-library/react": "13.4.0",
+    "@testing-library/user-event": "14.4.3",**
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-scripts": "4.0.0"
+  },
+```
+
+여기서 jest 는 보이지 않지만, jest-dom 은 jest 의 하위 라이브러리다.
+
+# First Test
+
+**CRA** 로 새 프로젝트를 만든다면 `App.test.js`파일이 같이 생성된다. 유닛 테스트 코드는 `*.test.js` 확장자를 갖는다. 
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import App from "./App";
+
+test("renders learn react link", () => {
+  render(<App />);
+  const linkElement = screen.getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
+});
+```
+
+test 함수는 2개의 인자를 갖는다.
+
+1. **테스트에 대한 “설명”** 이며 어떤 테스트인지 식별/구분 할 수 있는 내용으로 지을 것
+2. **실제로 테스트**하는 익명 함수
+
+가상으로 render 함수로 App을 내린 다음 `screen`에 몇몇 **Elements** 를 ****갖는다. `toBeInTheDocument` 를 통해 이 **Elements** 가 실제로 문서 내에 있는지 확인한다. 
+
+그러므로 App.js 에 이 내용이 있는지 예측한다.
+
+이제 이것을 실행하는데 `npm start` 로 스크립트를 실행하는 것과 마찬가지로 `npm test` 로 자동으로 테스트한다.
+
+![Untitled](https://nnea5215.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F15d8a940-cbc6-4533-ad49-0fd94ccc8cb7%2FUntitled.png?table=block&id=f2ad9bd9-d2c9-493e-9a92-bd314fa789fd&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&width=2000&userId=&cache=v2)
+
+그리고 여기서 a 를 누른다면 `.test.js` **로 끝나는 모든 파일**의 모든 테스트를 실행한다. 테스트 결과를 터미널로 받을 수 있다. 
+
+이 글을 작성한 시점에선 VS 코드를 사용할 수 없는 상태라, codeSandbox 에서 지원하는 기능으로 테스트 화면을 올려본다.  ( 여기선 `npm test` 로 실행하는 것이 아닌 자동으로 컴파일 해준다. ) 
+
+![Untitled](https://nnea5215.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F36a261de-eda3-4391-9b14-a35527c931ae%2FUntitled.png?table=block&id=e8ec96c3-1e60-48a2-90ba-43e2621d8937&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&width=2000&userId=&cache=v2)
+
+만약 테스트가 실패 했을 경우 테스팅 코드가 어디서 실패했는지 디버깅을 해볼 수 있음 테스트가 실패한 원인을 볼 수 있으며, 상황 따라 테스트 코드나 원본 소스를 수정한다. 
+
+다른 npm run 과 비슷하게 ctrl + c 로 종료할 수 있음
+
+# Create First Test
+
+이제 첫 테스트 파일을 만들기 앞서 컴포넌트를 하나 만들어둔다.
+
+`/components/Greeting.js`
+
+```jsx
+const Greeting = () => {
+  return (
+    <div>
+      <h2>Hello World</h2>
+      <p>It's good to see you!</p>
+    </div>
+  );
+};
+
+export default Greeting;
+```
+
+State 도 Props 도 없는 간단한 구조다. 
+이 컴포넌트를 App.js 에서 사용할 수 있도록 바꿈 ( 과정 설명 생략 )
+
+이제 App 혹은 Greeting 에 테스트를 할 수 있는데, 기본적으로 테스트를 할 땐 **테스트 하고자 하는 것에 가능하면 가깝게 작성**해야 좋음
+
+그러므로 `/components/Greeting.test.js` 코드를 생성해서 아래와 같이 작성한다. `test()` 는 **전역 함수**이므로 어디든 실행 가능하다.
+
+```jsx
+test('renders Hello World as a text', ()=> {
+  
+});
+```
+
+## AAA Pattern
+
+안에 테스트를 작성할 때 일반적으로 3가지 과정을 거치는데 **3A** 혹은 **AAA** 라고 부른다.
+
+- **Arrange ( 준비 )** : 테스트 하고자 하는 컴포넌트를 렌더링하기 원한다. 요구된다면 일반적인 설정도 곁들인다.
+- **Act ( 실행 )** : 실제로 실행되는 것들. 예를 들어 버튼 클릭 들을 테스트
+- **Assert ( 단언 )** : 브라우저에서 나오는 결과를 예측한다. 단언 시에 실행 가능한 함수는 get, find, query 등이 있다. 이들의 차이점은 리턴 타입 들.
+
+```jsx
+import { render, screen } from '@testing-library/react'
+import Greeting from "./Greeting";
+
+test('renders Hello World as a text', ()=> {
+  // Arrange
+  render(<Greeting />);
+
+  // Act
+  // ...nothing
+
+  // Assert 
+  //screen.getByText('Hello World', { exact: false }) // 이 옵션은 하위 문자열도 매칭된단 뜻
+	const helloWorldElement = screen.getByText("Hello World");
+  expect(helloWorldElement).toBeInTheDocument(true);	
+});
+```
+
+`*.test.js` 파일에는 **최소 한 개 이상의 `test()`가 선언**되어야 오류가 생기지 않는다. 
+
+# Test Suites
+
+애플리케이션 커질 수록 테스트 규모가 커지는데, 비슷한 유형끼리 Testing Suites 에 묶어 정리한다. 하나에 컴포넌트에 모든 테스트를 같은 Suites 에 추가한다. 
+
+전역 함수 `describe()` 로 이름을 정해둔다. 이 함수는 2개의 매개변수를 갖는데
+
+1. Suite 에 묶을 이름
+2. `test()`들이 나열된 익명 함수
+
+```jsx
+import { render, screen } from '@testing-library/react'
+import Greeting from "./Greeting";
+
+describe("Greeting Component test", () => {
+	test('renders Hello World as a text', () => {
+	  // Arrange
+	  render(<Greeting />);
+	
+	  // Act
+	  // ...nothing
+	
+	  // Assert 
+	  //screen.getByText('Hello World', { exact: false }) // 이 옵션은 하위 문자열도 매칭된단 뜻
+		const helloWorldElement = screen.getByText("Hello World");
+	  expect(helloWorldElement).toBeInTheDocument(true);	
+	});
+})
+
+```
+
+# Interact & State Test
+
+컴포넌트의 유저 상호작용과 State 값에 관련하여 테스트를 대응해본다.
+
+기존 Greeting 컴포넌트에 새로운 기능을 추가한다.
+
+```jsx
+import { useState } from "react";
+
+const Greeting = () => {
+  const [changedText, setChangedText] = useState(false);
+
+  const changeTextHandler = () => {
+    setChangedText(true);
+  };
+
+  return (
+    <div>
+      <h2>Hello World</h2>
+      {!changedText && <p>It's good to see you!</p>}
+      {changedText && <p>Changed!</p>}
+      <button onClick={changeTextHandler}>Change Text!</button>
+    </div>
+  );
+};
+
+export default Greeting;
+```
+
+버튼이 새로 추가되었고 클릭 시 paragraph 의 텍스트가 바뀐다. 
+
+여기서 중요한 건 **가능한 모든 시나리오**를 넣어야 한다. 그렇지 않으면 다른 시나리오가 틀렸단 것을 확인 할 수가 없어진다. ( 예를 들어 클릭 후 기존 상태에 나오던 내용도 없어졌는가. )
+
+그러므로 2개의 테스트를 작성한다. 클릭 했을 때랑 안 했을 때
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import Greeting from "./Greeting";
+
+describe("Greeting Component test", () => {
+  test("renders Hello World as a text", () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+    // ...nothing
+
+    // Assert
+    //screen.getByText('Hello World', { exact: false }) // 이 옵션은 하위 문자열도 매칭된단 뜻
+    const helloWorldElement = screen.getByText("Hello World");
+    expect(helloWorldElement).toBeInTheDocument(true);
+  });
+
+  test("renders good to see you if the button was NOT clicked", () => {
+    render(<Greeting />);
+    const outputElement = screen.getByText("good to see you", { exact: false });
+    expect(outputElement).toBeInTheDocument(true);
+  });
+
+  test("renders Changed if the button was CLICKED", async () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+    const buttonElement = screen.getByRole("button");
+    await userEvent.click(buttonElement);
+
+    // Assert
+    const outputElement = screen.getByText("Changed", { exact: false });
+    expect(outputElement).toBeInTheDocument(true);
+  });
+});
+```
+
+잡설로 CodeSandBox 환경에서 클릭 이벤트 테스트는 async/await 를 적용했다. 하지 않았을 경우 테스트가 원할 하지 않았다. ( 그 외에도 버그가 좀 있다… `expect()` 는 전역 함수지만, not defined 에러가 생기는 등… )
+
+클릭 후 이벤트 테스트는 처음으로 Act 를 적용한 경우인데 버튼을 클릭을 한 이후의 상태를 추정하기 위한 장치를 마련했다. 
+
+테스트를 합당하게 하려면 여기서 어떤 다른 테스트를 해볼 수 있을까. 개발자가 오류를 내서 랜더링하는 것을 깜빡한 경우도 테스트 해봐야 한다. 버튼을 클릭 한 후 good to see you 가 없어졌는지도 테스트 해야 한다.
+
+```jsx
+test("does not render good to sdd you if the button was clicked", async () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+    const buttonElement = screen.getByRole("button");
+    await userEvent.click(buttonElement);
+
+    // Assert
+    const outputElement = screen.queryByText("good to see you", {
+      exact: false
+    });
+    expect(outputElement).**toBeNull();**
+  });
+```
+
+여기서 `queryByText` 를 사용하는데 get 은 아무 것도 찾지 못할 경우, 오류를 일으키므로 의도적으로 없음을 테스트 하려면 **query 함수**를 사용해야 한다. 매칭 하기 위해 `toBeNull()` 로 결과를 판단한다.
+
+# Multiple Components
+
+이제 여러 개의 컴포넌트가 있는 경우를 테스트해본다. 
+
+`props`가 있는 컴포넌트 `Output.js` 를 생성한다.
+
+```jsx
+const Output = (props) => {
+  return <p>{props.children}</p>;
+};
+
+export default Output;
+```
+
+이제 Greeting 또한 위의 컴포넌트를 사용하도록 변경한다.
+
+```jsx
+<div>
+  <h2>Hello World</h2>
+  {!changedText && <Output children="It's good to see you!" />}
+  {changedText && <Output children="Changed!" />}
+  <button onClick={changeTextHandler}>Change Text!</button>
+</div>
+```
+
+그런데 이렇게 바꾸는 와중에도 테스트 코드는 정상 작동한다. render 의 좋은 점이라고 한다. 요구되는 컴포넌트 트리 전체를 렌더링 하는 중이다. 
+
+이제 하나 이상의 컴포넌트가 엮었으므로 **‘통합 테스트’** 라고 부를만한 상황이 되었다.
+
+# Async CodeTest
+
+이제 조금 복잡한 경우를 테스트해본다. `Async.js` 라는 코드를 생성했고 fetch 결과에 따라 다른 컴포넌트가 나오는 내용이다.
+
+```jsx
+import { useEffect, useState } from "react"
+
+const Async = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(()=>{
+    fetch('https;//jsonplaceholder.typicode.com/posts')
+      .then((response) => response.json())
+      .then((data) => {
+        setPosts(data);
+      });
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+이제 Async 컴포넌트에 대한 테스트 파일 `Async.test.js` 를 생성하고 아래처럼 작성한다.
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import Async from "./Async";
+
+describe("async component", () => {
+  test("renders posts if request succedds", () => {
+    render(<Async />);
+
+    const listItemElemlents = screen.getAllByRole("listitem");
+    expect(listItemElemlents).not.toHaveLength(0);
+  });
+});
+```
+
+여기서  `getAllByRole('listitem')` 을 사용하는데 2개 이상일 경우는 올바르게 작동하지 않을 수도 있기 때문이다.
+
+저장하고 테스트를 실행해보면 테스트가 실패한다. 그 이유는 listitem 이란 역할을 지닌 것을 못 찾았기 때문이다. 
+
+`getAllByRole()`은 즉시 screen 의 요소를 찾으려 하는데 Async 는 HTTP 비동기 호출을 하는 컴포넌트이다. 처음 상태는 리스트의 아이템이 하나도 없는 상태로 시작하는 것을 생각한다면 이 공백으로 인해 아무 것도 가져오지 못하는 거다. 
+
+그러므로 **Promise** 를 반환하여 재평가 가능성을 여는 `fineAllByRole()` 로 바꾸면 제대로 된 테스트가 가능해진다.  ( timeout 텀을 지정할 수 있으며, 기본 값은 1 이다 ) 
+덧붙여 **promise** 를 반환하는 만큼 `test` 는 **async** 함수로 실행 되어야 한다. 
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import Async from "./Async";
+
+describe("async component", () => {
+  test("renders posts if request succedds", **async** () => {
+    render(<Async />);
+
+    const listItemElemlents = **await screen.findAllByRole("listitem");**
+    expect(listItemElemlents).not.toHaveLength(0);
+  });
+});
+```
+
+# Definition
+
+위의 테스트는 HTTP 요청을 보내고 있는데, 좋은 방법이 아니다.
+
+<aside>
+🌟  개발 과정에서 테스트를 실행할 때 아래와 같은 이유로 서버에 HTTP 요청을 전송하진 않는다.
+
+1. 많은 테스트가 HTTP 요청을 할 경우 과부하 발생
+2. 서버로 POST 요청한다면 테스트로 인해 DB 에 데이터가 삽입되거나 서버의 내용이 바뀐다.
+
+</aside>
+
+그러므로 보통 취하는 방식은 테스팅 전용 서버로 요청을 전송하거나, 아예 하지 않는다. 
+이번 시간엔 전송을 하지 않는 유형으로 진행한다.
+
+한 가지 중요한 건 **내가 작성하지 않은 코드를 테스트 해선 안된다.** 우리는 fetch 가 성공적으로 요청을 전송하는지 테스트하지 않는 대신 전송된 요청의 서로 다른 결과에 따라서 컴포넌트가 올바로 작동하는지 테스트 해야 한다. 
+
+단 요청 전송이 성공했는지는 **무언가로 대체** 해야 한다. Jest 는 이와 같은 함수를 흉내내는 내장 지원책이 존재한다. 그래서 활용하기 쉽다.
+
+`Async.test.js` 에서 실행하는 `fetch` 는 우리만의 다른 함수로 덮어 써야 한다. 
+`window.fetch = jset.fn()` 을 선언하는데 fn 은 mock 함수를 만든단 의미다.
+
+```jsx
+import { render, screen } from "@testing-library/react";
+import Async from "./Async";
+
+describe("async component", () => {
+  test("renders posts if request succedds", async () => {
+    **window.fetch = jest.fn();**
+    **window.fetch.mockResolvedValueOnce({
+      json: async () => [{ id: "p1", title: "First post" }]
+    });** // promise 가 반환함을 설정
+    render(<Async />);
+
+    const listItemElemlents = await screen.findAllByRole("listitem");
+    expect(listItemElemlents).not.toHaveLength(0);
+  });
+});
+```
+
+이번에 적용할 `window.fetch.mockResolvedValueOnce()`은 fetch 가 일어날 때 리턴 할 값을 미리 만들어두고 그 값을 리턴 한다는 의미다.
+
+그 밖에 `jest.fn` 에는 다른 많은 기능들이 존재하므로 테스트 코드 작성해가면서 실력을 길러나가자.

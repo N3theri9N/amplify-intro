@@ -1,0 +1,195 @@
+---
+title: WebView 맛보기
+date: 2023-08-07
+tag: 
+---
+
+# WebView 맛보기
+생성 일시: 2023년 8월 7일 오전 10:45
+
+현재 현업에서 Android 랑 iOS애플리케이션을 WebView 를 사용하고 있다. 네이티브 기능을 활용하면서 웹의 기능을 기반으로 활용하고자 웹뷰를 채택했다고 한다. 
+
+직접적으로 앱을 다루진 않겠지만 적어도 네이티브와 웹 간의 정보교환이 어떻게 이뤄지는지는 알아볼 필요가 있어서 기록해본다. 
+
+# 웹뷰
+
+웹뷰는 앱 내부에서 웹 페이지를 보여지게 할때 사용된다. 이는 곧 앱 내부에 웹 페이지가 자리 잡는다는 의미다. 안드로이드에서는 JAVA/Kotiln 에서 사용되고 iOS 일 경우는 Swift 로 활용할 수 있다.
+
+## **android 일 경우**
+
+**Step1.** 애플리케이션을 새로 생성할때 이하의 플러그인을 가지고 있어야한다. ( gradle 기준 )
+
+```jsx
+{
+   id 'com.android.application'
+   id 'kotlin-android'
+   id 'kotlin-android-extensions'
+}
+```
+
+**Step2.** `activity_main.xml` 수정
+
+`activity_main.xml` 파일은 안드로이드 애플리케이션에서 보여질 기본 화면이다. Next.js 로 치면 `_app.js` 와 비슷한 역할이다. 
+
+**기본적으로 들어간** `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+		 <TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Hello World!"
+				app:layout_constrainBottom+tobottomOf="parent"
+				app:layout_constrainLeft_toLeftOf="parent"
+				app:layout_constrainRight_toRightOf="parent"
+				app:layout_constrainTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+이를 프론트엔드 애플리케이션으로 사용되려면 WebView 로 설정을 변경해야한다.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+ 
+    <!-- Place Web-view on the Screen -->
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+ 
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+**Step3.** `MainActivity.kt` 수정
+
+해당 파일은 액티비티에 할당하는 백엔드 파일로 상술한 view 파일에 매칭되도록 수정이 이뤄져야한다.
+
+**기존 파일** `MainActivity.kt`
+
+```kotlin
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+
+class MainActivity : AppCompatActivity() {
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(R.layout.activity_main)
+	}
+}
+```
+
+- **코드** **상세**
+    - class MainActivity 의 `:` 는 타입스크립트의 그것이 아니라 extends 즉 상속을 나타내는 기호다.
+    - override fun 구문은 코틀린에서 메소드를 오버라이드할 때 붙이는 키워드로 activity 가 시작될때 호출되며 이 메소드를 오버라이드시켜서 작성하게된다.
+    - onCreate 는 부모클래스의 생성자를 super 를 통해 호출해야한다.
+    - setContentView 는 activity 가 표시할 레이아웃 파일을 지정한다. `R.layout.activity_main` 은 상술한 `activity_main.xml` 파일을 지칭한다.
+    - `R`은 리소스정보를 가지는 클래스며 자동으로 생성되고 관리되며 리소스 정보도 ID 로 저장되어 코드에서 리소스파일에 접근할 수 있게하므로 붙여야한다.
+    
+
+웹 뷰를 대응한 `MainActivity.kt`
+
+```kotlin
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import android.webkit.WebViewClient
+import kotlinx.android.synthetic.main.activity_main.*
+ 
+class MainActivity : AppCompatActivity() {
+    private lateinit var webView: WebView
+ 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        webView = findViewById(R.id.webView)
+        webView.webViewClient = WebViewClient()
+        webView.loadUrl("https://www.geeksforgeeks.org/")
+        webView.settings.javaScriptEnabled = true
+        webView.settings.setSupportZoom(true)
+    }
+ 
+    override fun onBackPressed() {
+        if (webView.canGoBack())
+            webView.goBack()
+        else
+            super.onBackPressed()
+    }
+}
+```
+
+- **코드 상세**
+    - `findViewById` 로 `main_activity.xml` 에 들어간 `<WebView android:id="@+id/webView" />` 구성요소에 접근하여 webView 변수에 할당한다.
+    - `WebViewClient` 로 PageFinished 를 처리하고 URL 로딩을 재정의 할 수 있다.
+    - `loadUrl` 로 어떤 url 의 페이지를 대응할지 설정한다.
+    - `settings.javaScriptEnabled` 설정을 true 로 설정하면 자바스크립트 코드를 활성화하지만 xss 취약성 문제가 생길 수도 있다.
+    - `settings.setSupportZoom(**true**)` 설정으로 zoom 기능을 활성화한다.
+    - `override fun onBackPressed()` 메소드를 선언하여 백버튼을 누를때의 기능을 수행하도록 한다.
+        - 이전 페이지가 있어서`webView.canGoBack()` 이 가능하면 `webView.goBack()` 을 실행한다. 아니면, 애플리케이션을 나가게되는데 오버라이딩 전의 `super.onBackPressed()` 가 실행된다.
+
+**Step4.** `AndroidManifest.xml` **수정** 
+
+이 파일은 안드로이드 빌드 도구, 운영체제등과 같은 앱에 관한 필수정보가 들어있다. 수정해야할 사항은 애플리케이션에 인터넷 사용 권한을 허용해야한다.
+
+기본 `AndroidManifest.xml` 
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+package="com.example.webview_kotlin">
+
+	<uses-permission android:name="android.permission.INTERNET"/>
+
+<application
+	android:allowBackup="true"
+	android:icon="@mipmap/ic_launcher"
+	android:label="@string/app_name"
+	android:roundIcon="@mipmap/ic_launcher_round"
+	android:supportsRtl="true"
+	android:theme="@style/AppTheme">
+	<activity android:name=".MainActivity">
+		<intent-filter>
+			<action android:name="android.intent.action.MAIN" />
+			<category android:name="android.intent.category.LAUNCHER" />
+		</intent-filter>
+	</activity>
+</application>
+</manifest>
+```
+
+**Native to WebView**
+
+`@JavascriptInterface` 로 선언한 클래스를 `addJavascriptInterface()` 로 webview 와 결합하여 저장할 수 있다.
+
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+	webView.addJavascriptInterface(WebAppInterface(this), "Android")
+}
+
+class WebAppInterface(private val mContext: Context) {
+    @JavascriptInterface
+    fun boo(a: String) {
+	    ...
+		}
+}
+```
+
+이를 설정후 사용할 땐 `Android.boo()` 로 실행하면 Native 에 가지고 있는 것을 JavaScript 단에서 실행할 수가 있다.
+
+참고한 레퍼런스 :
+
+- [https://www.geeksforgeeks.org/android-webview-in-kotlin/](https://www.geeksforgeeks.org/android-webview-in-kotlin/)
+- [https://suhwanc.tistory.com/140](https://suhwanc.tistory.com/140)

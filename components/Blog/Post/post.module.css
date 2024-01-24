@@ -7,9 +7,6 @@
   margin-top: 1.4rem;
 }
 
-.post h3 {
-}
-
 .post > * {
   margin: 1rem 0px;
 }
@@ -17,7 +14,7 @@
 .post aside {
   border-width: 2px;
   padding: 1rem;
-  border-radius: 1rem;
+  border-radius: 0.25rem;
 }
 
 .post > p:first-of-type {
@@ -75,6 +72,7 @@
   margin-left: 2rem;
 }
 .post blockquote {
-  border-left: solid 3px black;
+  border-left: solid 3px;
+  border-color: light-dark(black, white);
   padding-left: 10px;
 }
