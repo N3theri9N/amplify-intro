@@ -7,6 +7,9 @@
   margin-top: 1.4rem;
 }
 
+.post h3 {
+}
+
 .post > * {
   margin: 1rem 0px;
 }
@@ -25,17 +28,24 @@
   margin-top: 0px;
   margin-bottom: 0.5rem;
 }
-
 .post ul {
-  margin-left: 2rem;
+  position: relative;
   display: flex;
   flex-direction: column;
-  row-gap: 2px;
-  list-style-type: disc;
-  list-style-position: inside;
+  margin-left: 2rem;
+  row-gap: 0.5rem;
 }
 
-.post p code {
+.post ul li::before {
+  content: "•";
+  position: absolute;
+  left: -15px;
+}
+.post ul p {
+  margin-top: 0px;
+}
+
+.post code {
   background: rgba(135, 131, 120, 0.15);
   color: #eb5757;
   border-radius: 4px;
@@ -43,10 +53,13 @@
 }
 
 .post pre {
-  background: rgba(135, 131, 120, 0.15);
+  /* background: rgba(135, 131, 120, 0.15); */
   border-radius: 4px;
   padding: 2rem;
   overflow-x: auto;
+}
+.post pre code {
+  background: inherit;
 }
 
 .post a {
@@ -60,4 +73,8 @@
 .post ol {
   list-style: decimal;
   margin-left: 2rem;
+}
+.post blockquote {
+  border-left: solid 3px black;
+  padding-left: 10px;
 }
