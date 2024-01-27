@@ -22,7 +22,7 @@ const AsideMenu = ({
                     className={clsx("w-auto text-nowrap text-ellipsis text-sm", {
                       "pl-4": node.nodeName === "H2",
                       "pl-8": node.nodeName === "H3",
-                      "text-sky-400": index == activedIndex,
+                      "text-sky-500": index == activedIndex,
                     })}
                   >
                     {`${node.text.replace(/-/g, " ")}`}
