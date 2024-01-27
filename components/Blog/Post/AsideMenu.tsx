@@ -8,6 +8,10 @@ const AsideMenu = ({
   headData: { nodeName: string; text: string }[];
   activedIndex?: number;
 }) => {
+  if (headData.length === 0) {
+    return <></>;
+  }
+
   return (
     <div className="left-0 fixed w-full flex">
       <div className="relative mx-auto w-full max-w-[800px]">
