@@ -4,6 +4,7 @@ import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { Post } from "contentlayer/generated";
 import { useSearchParams } from "next/navigation";
+import { parseMdxDateFormat } from "@/utils/date";
 
 const BlogHome = ({ posts, totalSize }: { posts: Post[]; totalSize: number }) => {
   return (
@@ -104,7 +105,7 @@ function PostCard(post: Post) {
             })}
         </div>
         <time dateTime={post.date} className="block text-xs opacity-50">
-          {format(parseISO(post.date), "yyyy-MM-dd")}
+          {parseMdxDateFormat(post.date)}
         </time>
       </div>
     </article>
