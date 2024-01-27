@@ -34,8 +34,8 @@ const getPost = (id: string) => {
 
 const BlogPostPage = ({ params }: { params: { slug: string } }) => {
   const id: string = String(params.slug);
-  const post = getPost(id);
-  return <PostComponent code={post.body.code} />;
+  const post: Post = getPost(id);
+  return <PostComponent post={post} />;
 };
 
 export default BlogPostPage;

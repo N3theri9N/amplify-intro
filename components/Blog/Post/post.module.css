@@ -16,10 +16,10 @@
   padding: 1rem;
   border-radius: 0.25rem;
 }
-
+/* 
 .post > p:first-of-type {
   opacity: 50%;
-}
+} */
 
 .post aside p {
   margin-top: 0px;
