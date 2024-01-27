@@ -23,7 +23,7 @@ const PAGE_SIZE: number = 10;
 function PageComponenet({ totalSize }: { totalSize: number }): JSX.Element {
   const searchParams = useSearchParams();
   const paramPage: string = searchParams.get("page") ?? "0";
-  const paramTag: string = searchParams.get("tag") ?? " ";
+  const paramTag: string = searchParams.get("tag") ?? "";
   const totalPage: number = Math.ceil(totalSize / PAGE_SIZE);
   return (
     <div className="px-auto mx-auto flex items-center">
