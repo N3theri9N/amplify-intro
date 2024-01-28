@@ -1,6 +1,7 @@
 import PostComponent from "@/components/Blog/Post";
 import { allDocuments as allDocs, Post } from "contentlayer/generated";
 import type { Metadata, ResolvingMetadata } from "next";
+import { SORTED_ALL_POST } from "../allPosts";
 
 type Props = {
   params: { slug: string };
@@ -28,7 +29,10 @@ export async function generateMetadata(
 }
 
 const getPost = (id: string) => {
-  const post: Post = allDocs.find((doc: Post) => doc._raw.flattenedPath === id) as Post;
+  const post: Post = SORTED_ALL_POST.find((doc: Post) => doc._raw.flattenedPath === id) as Post;
+  // const index = SORTED_ALL_POST.map((doc) => doc._raw.flattenedPath).indexOf(id);
+  // console.log(allDocs[index - 1]?.title);
+  // console.log(allDocs[index + 1]?.title);
   return post;
 };
 
