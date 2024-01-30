@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Post } from "contentlayer/generated";
 import { useSearchParams } from "next/navigation";
 import { parseMdxDateFormat } from "@/utils/date";
+import { FILTERED_POSTS } from "@/app/blog/allPosts";
 
 const BlogHome = ({ posts, totalSize }: { posts: Post[]; totalSize: number }) => {
   return (
@@ -72,6 +73,8 @@ function TitlePanel(): JSX.Element {
 }
 
 function PostCard(post: Post) {
+  const searchParams = useSearchParams();
+  const paramTag: string = searchParams.get("tag") ?? "";
   const tagData: string | undefined = post.tag;
   const tagStr: string = typeof tagData === "string" ? tagData : "";
   const tagArr: string[] = tagStr
@@ -82,7 +85,10 @@ function PostCard(post: Post) {
   return (
     <article className="px-2 py-4 border-b-2 border-opacity-50">
       <h2 className="mb-1 text-xl">
-        <Link href={post.url} className="text-blue-700 hover:text-blue-900  dark:text-blue-400">
+        <Link
+          href={{ pathname: post.url, query: { tag: paramTag.toLowerCase() } }}
+          className="text-blue-700 hover:text-blue-900  dark:text-blue-400"
+        >
           {post.title}
         </Link>
       </h2>

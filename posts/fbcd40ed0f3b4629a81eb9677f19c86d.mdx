@@ -1,0 +1,134 @@
+---
+title: 블로그 제작기 2.mdx, rehype
+date: 2024-01-30 12:11
+tag: Blog,FrontEnd
+---
+# 수정할 이슈
+
+블로그 컨텐츠 원본을 ContentLayer 로 제작을 하면서 문제점이 여럿 발견하게 되었다.
+
+- 컨텐츠의 내용이 `dangerouslySetInnerHTML`를 통해 내부 HTML 을 직접 적용하고 있어, 포스트 내용 자체랑 관련된 기능을 구현하기가 어려움. ( 예 : 목차 기능 )
+    - 특히 원래 코드 내용으로 보여주려고 넣은 HTML 태그나 코드 내용이 `innerHTML` 로 들어가서 누락되는 문제가 있었다 특히 `import` 는 결과물에 보이지 않았다.
+- 코드블록의 내용이 한 가지 색으로 나오고 있어, 포맷에 맞춘 색을 넣고 싶다.
+    
+    ![](https://file.notion.so/f/f/b67b8caf-0e30-4e9a-b6db-84175dd949a3/d1b3b1cd-1f6e-4282-afbf-a32e57b5dc9e/Untitled.png?id=e540ca8c-729d-4135-bea3-1057bd256c43&table=block&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&expirationTimestamp=1706680800000&signature=4hupLKChPOqaAoOw2TSgiZxEuNnAumNxPjGdBcrEAZk&downloadName=Untitled.png)
+
+하나씩 해결하자면 전자는 **mdx**로, 후자는 **rehype** 과정의 설정을 변경할 수 있었다.
+
+# MDX
+
+공식 사이트 : [https://mdxjs.com/](https://mdxjs.com/)
+
+contentLayer 가이드 : [https://contentlayer.dev/docs/sources/files/mdx-d747e46d](https://contentlayer.dev/docs/sources/files/mdx-d747e46d)
+
+MDX 는 간단히 요약하면 JSX 컴포넌트 문법을 마크 다운에 넣어 사용할 수 있는 형식이다. 원래부터 이 내용은 컴포넌트로서 사용된 문법임을 미리 넣게 하여, contentLayer 가 잘못 파싱하는 상황을 막을 수 있었다. 
+
+원본의 확장자를 `*.md` 에서 `*.mdx` 로 수정하였고, `contentlayer.config.ts`설정을 mdx 를 사용하도록, 변경하였다.
+
+```jsx
+export const Post = defineDocumentType(() => ({
+  name: "Post",
+  filePathPattern: `**/*.mdx`,
+  contentType: "mdx",
+	...
+}));
+```
+
+MDX 는 `useMDXComponent` 훅으로 NextJS 컴포넌트로서 활용할 수 있어, 포스트 페이지에 보여야할 내용을 이하와 같이 수정하였다. 더 이상 `dangerouslySetInnerHTML` 에 넣지 않는다. 
+
+또한 mdx 에서 파싱된 건 `post.body.code` 를 `MDXContent` 로 재구성한다.
+
+`Components/Post/index.tsx`
+
+```jsx
+import { useMDXComponent } from "next-contentlayer/hooks"
+
+const PostComponent = ({ post }: { post: Post }) => {
+  const MDXContent = useMDXComponent(post.body.code);
+
+  return <MDXContent />
+}
+```
+
+이제 블로그 글에 import 라는 단어가 잘 나오고 있는 것을 확인하였다. 
+
+목차 기능을 만들기 앞서 아래 처럼 `nodeSearcher` 레퍼런스로 해당 컴포넌트를 대응해보니 `h1` `h2` `h3` 가 몇 개인지 나오는지 확인할 수 있었다. 즉 이제 contentLayer 의 결과물은 또 하나의 컴포넌트처럼 동작한다.
+
+```jsx
+import { useMDXComponent } from "next-contentlayer/hooks"
+
+const PostComponent = ({ post }: { post: Post }) => {
+  const MDXContent = useMDXComponent(post.body.code);
+
+  const nodeSearcher = useCallback((node: HTMLDivElement) => {
+    if (node == null) {
+      return;
+    }
+    const sections: NodeListOf<HTMLHeadElement> = node.querySelectorAll("h1,h2,h3");
+    const headArray: HTMLHeadElement[] = Array.from(sections);
+  }
+
+  return (
+		<div ref={nodeSearcher}>
+      <MDXContent />
+    </div>)
+}
+```
+
+# rehype
+
+**공식 문서** : [https://github.com/rehypejs/rehype](https://github.com/rehypejs/rehype)
+
+rehype 란 HTML 을 플러그인으로 변환하는 도구다. 그러므로 ContentLayer 의 결과물인 HTML 구조에 Code 부분에 플러그인을 도입하여 DOM 구조가 변경된다. 
+
+기존에는 `<code>` 태그 내부에 텍스트만 여러 줄이 들어간 형태였다면 이 플러그인을 적용시, `<code>` 내부에 언어 포맷에 맞춰서 여러 `<span>` 태그들로 분할되어 화면에 보여주게된다. 
+
+관련된 라이브러리는 여러가지 있지만, 그 중 범용적으로 사용하면서 다양한 테마를 제공하는 **[rehypePrettyCode](https://rehype-pretty-code.netlify.app/)** 를 사용해보았다.
+
+일단 관련 패키지를 설치하였다.
+
+`yarn add rehype-pretty-code shikiji@^0.9.0`
+
+여기서 `shikiji` 패키지는 코드 포맷을 분할하는 기능을 담당한다. 여기서 찾아본 레퍼런스에서는 `shiki` 를 설치하지만, 2024년 1월 기준의 최신 `rehype-pretty-code` 와 `shiki` 는 서로 버전이 맞지 않아 코드간 간격이 너무 벌어지는 문제가 발생하였다.   
+
+패키지를 설치 했다면 `contentlayer.config.ts` 에서 `rehypePlugins` 설정을 따로 추가하였다.
+
+```jsx
+import rehypePrettyCode from "rehype-pretty-code";
+
+export default makeSource({
+  contentDirPath: "posts",
+  disableImportAliasWarning: true,
+  documentTypes: [Post],
+  mdx: {
+    remarkPlugins: [],
+    rehypePlugins: [
+      [
+        rehypePrettyCode,
+        {
+          theme: "github-dark",
+          keepBackground: true,
+        },
+      ],
+    ] as Pluggable[],
+  },
+});
+```
+
+참고로 이 설정은 contentLayer 만 사용하는 기능이 아니므로, rehype 와 remark 공식문서에 상세히 설명되어있다.
+
+<aside>
+🔗 **Remark**
+
+참고의 참고로 [remark](https://github.com/remarkjs/remark) 는 마크 다운을 변형하는 도구이다. 그러므로 contentLayer가 컨텐츠를 제작할 때 remark 와 rehype 를 모두 사용하고 있다면.
+
+```
+MDX ----> remark AST ------> rehype AST --------> HTML
+    parse            convert            stringify
+```
+
+순서로 실행된다.
+
+</aside>
+
+여기까지 진행함으로서 포스트의 내용이 노션의 스타일과 비슷하게 제작할 수 있었다.

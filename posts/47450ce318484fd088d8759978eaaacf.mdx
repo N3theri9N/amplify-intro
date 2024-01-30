@@ -1,9 +1,8 @@
 ---
-title: 블로그 제작기:ContentLayer 
+title: 블로그 제작기 1.ContentLayer
 date: 2024-01-30 10:49
 tag: Blog,FrontEnd
 ---
-
 # 생성 동기
 
 꾸준한 코딩 공부를 위해 블로그를 운영하기로 결정하였다. 그렇잖아도 티스토리, 네이버블로그, 벨로그와 같은 원래 있는 블로그 플랫폼을 이용해보려고 했으나, 그저 기록만 하고 마는 것 보단 내가 알게 된 것을 블로그에 직접 반영해볼 수 있도록, SEO 에 불리한 점이 있긴 해도 직접 만들기로 결정하였다.
@@ -33,17 +32,6 @@ nextJS 패키지가 빌드시 **contentLayer** 의 내용물도 같이 적용 �
 ```jsx
 /** @type {import('next').NextConfig} */
 const { withContentlayer } = require("next-contentlayer");
-
-const nextConfig = {
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ["@svgr/webpack"],
-    });
-
-    return config;
-  },
-};
 
 module.exports = withContentlayer(nextConfig);
 ```
@@ -165,7 +153,7 @@ export default function Home() {
 
   return (
     <div>      
-			{posts.map((post, idx) => (
+      {posts.map((post, idx) => (
         <PostCard key={idx} {...post} />
       ))}
     </div>

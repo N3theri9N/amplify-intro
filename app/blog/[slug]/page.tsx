@@ -1,11 +1,21 @@
 import PostComponent from "@/components/Blog/Post";
 import { allDocuments as allDocs, Post } from "contentlayer/generated";
 import type { Metadata, ResolvingMetadata } from "next";
-import { SORTED_ALL_POST } from "../allPosts";
+import { FILTERED_POSTS, SORTED_ALL_POST, TAG_UNION } from "../allPosts";
 
 type Props = {
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
+};
+
+const getPost = (id: string, tag: string): { nextPost?: Post; prevPost?: Post; post: Post } => {
+  let postList = tag !== "" ? FILTERED_POSTS.get(tag) ?? [] : SORTED_ALL_POST;
+
+  const post: Post = postList.find((doc: Post) => doc._raw.flattenedPath === id) as Post;
+  const index = postList.map((doc) => doc._raw.flattenedPath).indexOf(id);
+  const prevPost: Post | undefined = postList[index + 1];
+  const nextPost: Post | undefined = postList[index - 1];
+  return { post, prevPost, nextPost };
 };
 
 export async function generateMetadata(
@@ -14,11 +24,10 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   // read route params
   const id: string = String(params.slug);
-  const post = getPost(id);
+  const postData = getPost(id, "");
 
-  // optionally access and extend (rather than replace) parent metadata
   const previousImages = (await parent).openGraph?.images || [];
-  const title: string = "RHP 블로그 : " + post.title;
+  const title: string = "RHP 블로그 : " + postData.post.title;
   return {
     title,
     openGraph: {
@@ -28,18 +37,17 @@ export async function generateMetadata(
   };
 }
 
-const getPost = (id: string) => {
-  const post: Post = SORTED_ALL_POST.find((doc: Post) => doc._raw.flattenedPath === id) as Post;
-  // const index = SORTED_ALL_POST.map((doc) => doc._raw.flattenedPath).indexOf(id);
-  // console.log(allDocs[index - 1]?.title);
-  // console.log(allDocs[index + 1]?.title);
-  return post;
-};
-
-const BlogPostPage = ({ params }: { params: { slug: string } }) => {
+const BlogPostPage = ({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { tag?: TAG_UNION };
+}) => {
   const id: string = String(params.slug);
-  const post: Post = getPost(id);
-  return <PostComponent post={post} />;
+  const { tag = "" } = searchParams;
+  const postData: { post: Post; nextPost?: Post; prevPost?: Post } = getPost(id, tag);
+  return <PostComponent {...postData} />;
 };
 
 export default BlogPostPage;

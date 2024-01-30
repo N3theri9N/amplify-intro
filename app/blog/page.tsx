@@ -1,7 +1,7 @@
-import { compareDesc } from "date-fns";
-import { allPosts, Post } from "contentlayer/generated";
+import { Post } from "contentlayer/generated";
 import { Metadata } from "next";
 import BlogHome from "@/components/Blog";
+import { SORTED_ALL_POST, FILTERED_POSTS, TAG_UNION } from "./allPosts";
 
 export const metadata: Metadata = {
   title: "RHP의 블로그",
@@ -16,21 +16,22 @@ export const metadata: Metadata = {
 
 const PAGE_SIZE: number = 10;
 
-function getFilteredPosts(tag: string = ""): Post[] {
-  const regex = new RegExp(tag);
-  const filteredPosts = allPosts
-    .filter((item) => {
-      return regex.test(String(item.tag).toLowerCase());
-    })
-    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
-  return filteredPosts;
-}
-
-export default function Blog({ searchParams }: { searchParams: { page?: number; tag?: string } }) {
+export default function Blog({
+  searchParams,
+}: {
+  searchParams: { page?: number; tag?: TAG_UNION };
+}) {
   const { page = 0, tag = "" } = searchParams;
-  const filteredPosts = getFilteredPosts(tag);
+  let filteredPosts: Post[];
+  if (tag !== "") {
+    filteredPosts = FILTERED_POSTS.get(String(tag).toLowerCase()) ?? [];
+  } else {
+    filteredPosts = SORTED_ALL_POST;
+  }
+
   const from: number = PAGE_SIZE * Number(page);
   const to: number = PAGE_SIZE * (Number(page) + 1);
   const posts = filteredPosts.slice(from, to);
+
   return <BlogHome posts={posts} totalSize={filteredPosts.length} />;
 }
