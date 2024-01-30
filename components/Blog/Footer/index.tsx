@@ -21,7 +21,7 @@ const BlogFooter = () => {
       <div className="text-center w-full">Reversed hp Blog</div>
       <div className="text-center w-full h-10 flex justify-center gap-4">
         {linkData.map((link) => (
-          <Link key={link.label} href={link.href} target="_blank">
+          <Link aria-label={link.label} key={link.label} href={link.href} target="_blank">
             {link.icon}
           </Link>
         ))}

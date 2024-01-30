@@ -52,7 +52,7 @@ function PostCard(post: Post) {
       </h2>
       <div className="flex justify-between items-center h-6">
         <TagBadges tag={post.tag} />
-        <time dateTime={post.date} className="block text-xs opacity-50">
+        <time dateTime={post.date} className="block text-xs font-light">
           {parseMdxDateFormat(post.date)}
         </time>
       </div>
