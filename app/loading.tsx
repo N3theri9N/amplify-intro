@@ -20,7 +20,7 @@ export default function Loading(): JSX.Element {
     setTimeout(() => {
       setFadeOut(sectionRef);
     }, splashFadeoutTime);
-  }, []);
+  }, [delay]);
 
   return (
     <div

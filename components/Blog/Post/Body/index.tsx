@@ -12,4 +12,6 @@ const PostBody = forwardRef<HTMLDivElement, { code: string }>(({ code }, ref) =>
   );
 });
 
+PostBody.displayName = "PostBody";
+
 export default PostBody;
