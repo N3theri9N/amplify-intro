@@ -28,8 +28,7 @@ const BlogFooter = () => {
       </div>
       <div className="text-center w-full">
         <div>Powered by NextJS & ContentLayer</div>
-        <div>Since. 2024 Janurary</div>
-        <div>No Copyright</div>
+        <div>Since. Janurary 2024</div>
       </div>
     </div>
   );

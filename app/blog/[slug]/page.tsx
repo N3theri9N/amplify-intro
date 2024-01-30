@@ -27,7 +27,7 @@ export async function generateMetadata(
   const postData = getPost(id, "");
 
   const previousImages = (await parent).openGraph?.images || [];
-  const title: string = "RHP 블로그 : " + postData.post.title;
+  const title: string = "Reversed_hp : " + String(postData?.post?.title ?? "");
   return {
     title,
     openGraph: {
