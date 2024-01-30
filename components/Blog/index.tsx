@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 
-import { format, parseISO } from "date-fns";
 import { Post } from "contentlayer/generated";
 import { useSearchParams } from "next/navigation";
 import { parseMdxDateFormat } from "@/utils/date";

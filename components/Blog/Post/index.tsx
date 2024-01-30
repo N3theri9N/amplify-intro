@@ -1,7 +1,6 @@
 "use client";
 import { useMDXComponent } from "next-contentlayer/hooks";
 import { Post } from "contentlayer/generated";
-import { format, parseISO } from "date-fns";
 import { useCallback, useState } from "react";
 import AsideMenu from "./AsideMenu";
 import style from "./post.module.css";
