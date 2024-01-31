@@ -45,7 +45,7 @@ function PostCard(post: Post) {
       <h2 className="mb-1 text-xl">
         <Link
           href={{ pathname: post.url, query: { tag: paramTag.toLowerCase() } }}
-          className="text-blue-700 hover:text-blue-900  dark:text-blue-400"
+          className="text-blue-700 hover:text-blue-900 dark:text-blue-400"
         >
           {post.title}
         </Link>

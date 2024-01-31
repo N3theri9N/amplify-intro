@@ -16,7 +16,7 @@ const AsideMenu = ({
     <div className="left-0 fixed w-full flex">
       <div className="relative mx-auto w-full max-w-[800px]">
         <div className="absolute left-[800px]">
-          <aside className="rounded-xl border-1 w-auto max-w-[300px] max-h-[80vh] bg-white overflow-y-auto border-2 p-4">
+          <aside className="rounded-xl border-1 w-auto max-w-[300px] max-h-[80vh] bg-white dark:bg-slate-900 overflow-y-auto border-2 p-4">
             {headData.map((node, index) => {
               return (
                 <div key={`aside_${index}`}>

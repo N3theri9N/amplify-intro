@@ -17,7 +17,7 @@ const BlogFooter = () => {
   ];
 
   return (
-    <div className="h-72 flex flex-col justify-around border-t-[1px] py-8 border-black/50">
+    <div className="h-72 flex flex-col justify-around border-t-[1px] py-8 border-black/50 dark:border-white">
       <div className="text-center w-full">Reversed hp Blog</div>
       <div className="text-center w-full h-10 flex justify-center gap-4">
         {linkData.map((link) => (
