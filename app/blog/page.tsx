@@ -5,7 +5,7 @@ import { SORTED_ALL_POST, FILTERED_POSTS, TAG_UNION } from "./allPosts";
 
 export const metadata: Metadata = {
   title: "RHP의 블로그",
-  // metadataBase: new URL("/blog"),
+  metadataBase: new URL("https://master.d25qbak3tb51zc.amplifyapp.com/blog"),
   description: "현재 베타 버전입니다. 추후에 주요 기능들이 추가될 예정입니다.",
   openGraph: {
     images: "",

@@ -29,6 +29,7 @@ export async function generateMetadata(
   const previousImages = (await parent).openGraph?.images || [];
   const title: string = "Reversed_hp : " + String(postData?.post?.title ?? "");
   return {
+    metadataBase: new URL(`https://master.d25qbak3tb51zc.amplifyapp.com/blog/${id}`),
     title,
     openGraph: {
       title,
