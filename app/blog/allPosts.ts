@@ -5,7 +5,7 @@ export const SORTED_ALL_POST: Post[] = allPosts.sort((a, b) =>
   compareDesc(new Date(a.date), new Date(b.date))
 );
 
-const ALL_TAGS = ["blog", "frontend", "javascript", "nextjs", "test"];
+const ALL_TAGS = ["", "blog", "frontend", "javascript", "nextjs", "test"];
 export type TAG_UNION = (typeof ALL_TAGS)[number];
 
 const filteredPostMap: [TAG_UNION, Post[]][] = ALL_TAGS.map((tag) => {

@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { parseMdxDateFormat } from "@/utils/date";
 import TagBadges from "./Tag";
 import PageComponenet from "./Pagination";
+import TagLists from "./Tag/Lists";
 
 const BlogHome = ({ posts, totalSize }: { posts: Post[]; totalSize: number }) => {
   return (
@@ -21,18 +22,21 @@ const BlogHome = ({ posts, totalSize }: { posts: Post[]; totalSize: number }) =>
 
 function TitlePanel(): JSX.Element {
   return (
-    <div className="p-4 rounded-xl border-2">
-      <div className="text-xl font-bold">
-        이 블로그는 현재 베타 버전입니다. 제작자 기분 따라 몇몇 기능들이 추가될 예정입니다.
+    <>
+      <div className="p-4 rounded-xl border-2">
+        <div className="text-xl font-bold">
+          이 블로그는 현재 베타 버전입니다. 제작자 기분 따라 몇몇 기능들이 추가될 예정입니다.
+        </div>
+        <div className="text-xl">TODOS : </div>
+        <ul className="list-disc list-inside">
+          <li>기존 Notion 포스트 이전</li>
+          <li>검색 기능</li>
+          <li>태그 목록 기능</li>
+          <li>TOC 드래그 / 닫기</li>
+        </ul>
       </div>
-      <div className="text-xl">TODOS : </div>
-      <ul className="list-disc list-inside">
-        <li>기존 Notion 포스트 이전</li>
-        <li>검색 기능</li>
-        <li>태그 목록 기능</li>
-        <li>TOC 드래그 / 닫기</li>
-      </ul>
-    </div>
+      <TagLists />
+    </>
   );
 }
 
