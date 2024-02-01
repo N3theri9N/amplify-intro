@@ -37,6 +37,12 @@ export async function generateMetadata(
   };
 }
 
+export async function generateStaticParams() {
+  return SORTED_ALL_POST.map((post) => ({
+    slug: post._raw.flattenedPath,
+  }));
+}
+
 const BlogPostPage = ({
   params,
   searchParams,
