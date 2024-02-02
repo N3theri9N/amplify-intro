@@ -16,6 +16,21 @@ const filteredPostMap: [TAG_UNION, Post[]][] = ALL_TAGS.map((tag) => {
   return [tag, filteredPost];
 });
 
-export const FILTERED_POSTS: Map<TAG_UNION, Post[]> = (function () {
-  return new Map(filteredPostMap);
-})();
+export const FILTERED_POSTS: Map<TAG_UNION, Post[]> = new Map(filteredPostMap);
+
+// const singleton = (function () {
+//   let instance: any;
+//   function init() {
+//     return new Map(filteredPostMap);
+//   }
+//   return {
+//     getInstance: function () {
+//       if (!instance) {
+//         instance = init();
+//       }
+//       return instance;
+//     },
+//   };
+// })();
+
+// export const SINGLETON_POSTS = singleton.getInstance();

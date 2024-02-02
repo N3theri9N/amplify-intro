@@ -1,7 +1,7 @@
 import { Post } from "contentlayer/generated";
 import { Metadata } from "next";
 import BlogHome from "@/components/Blog";
-import { SORTED_ALL_POST, FILTERED_POSTS, TAG_UNION } from "./allPosts";
+import { FILTERED_POSTS, TAG_UNION } from "./allPosts";
 
 export const metadata: Metadata = {
   title: "RHP의 블로그",
@@ -22,12 +22,7 @@ export default function Blog({
   searchParams: { page?: number; tag?: TAG_UNION };
 }) {
   const { page = 0, tag = "" } = searchParams;
-  let filteredPosts: Post[];
-  if (tag !== "") {
-    filteredPosts = FILTERED_POSTS.get(String(tag).toLowerCase()) ?? [];
-  } else {
-    filteredPosts = SORTED_ALL_POST;
-  }
+  const filteredPosts: Post[] = FILTERED_POSTS.get(tag) ?? [];
 
   const from: number = PAGE_SIZE * Number(page);
   const to: number = PAGE_SIZE * (Number(page) + 1);

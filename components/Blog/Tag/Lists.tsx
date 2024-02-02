@@ -1,10 +1,11 @@
 import * as Aside from "@/components/UI/Portal/Aside";
-import { FILTERED_POSTS } from "@/app/blog/allPosts";
 import Link from "next/link";
 import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
 
+import { FILTERED_POSTS } from "@/app/blog/allPosts";
 let TAG_ARRAY: { [key: string]: number } = {};
+
 FILTERED_POSTS.forEach((data, index) => {
   TAG_ARRAY[index] = data.length;
 });

@@ -1,5 +1,5 @@
 import PostComponent from "@/components/Blog/Post";
-import { allDocuments as allDocs, Post } from "contentlayer/generated";
+import { Post } from "contentlayer/generated";
 import type { Metadata, ResolvingMetadata } from "next";
 import { FILTERED_POSTS, SORTED_ALL_POST, TAG_UNION } from "../allPosts";
 
@@ -8,9 +8,8 @@ type Props = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-const getPost = (id: string, tag: string): { nextPost?: Post; prevPost?: Post; post: Post } => {
-  let postList = tag !== "" ? FILTERED_POSTS.get(tag) ?? [] : SORTED_ALL_POST;
-
+const getPost = (id: string, tag: TAG_UNION): { nextPost?: Post; prevPost?: Post; post: Post } => {
+  const postList = FILTERED_POSTS.get(tag) ?? [];
   const post: Post = postList.find((doc: Post) => doc._raw.flattenedPath === id) as Post;
   const index = postList.map((doc) => doc._raw.flattenedPath).indexOf(id);
   const prevPost: Post | undefined = postList[index + 1];

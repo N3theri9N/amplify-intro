@@ -1,0 +1,256 @@
+---
+title: 블로그 제작기 3.태그 기능﹕자료구조와 싱글톤 모듈
+date: 2024-02-02 10:35
+tag: Blog,FrontEnd
+---
+
+> 현재 블로그 홈의 왼쪽 칸에는 태그 기능이 들어있다. 
+이를 구현하기 위한 기술적인 고민이 있었다.
+> 
+
+# MDX 태그 설정
+
+기존에 ContentLayer 의 포스트 데이터에서 `tag` 를 받도록 필드 값을 추가하였다.
+
+`contentlayer.config.ts`
+
+```jsx
+export const Post = defineDocumentType(() => ({
+  name: "Post",
+  filePathPattern: `**/*.mdx`,
+  contentType: "mdx",
+
+  fields: {
+    title: { type: "string", required: true },
+    date: { type: "date", required: true },
+    tag: { type: "string" },
+  // ^^^^^^^^^^^^^^^^^^^^^^^
+  },
+}));
+```
+
+`*.mdx`
+
+```jsx
+---
+title : Vuejs, React 배우기 전에 꼭 알아야 하는 지식
+date: 2022-06-23 13:22:00
+tag: JavaScript, FrontEnd
+---
+```
+
+이제 태그별로 자료를 분리할 수 있을 것이다.
+
+# 자료구조 선택
+
+## Array
+
+allPosts 를 통해 전체 포스트 내용들을 불러올 수가 있었으며, 포스트 필드값 tag 에 따라서 태그 값별로 포스트를 출력할 수 있는 기능은 `filter` 를 통해 제작할 수는 있었다.
+
+```jsx
+const { tag = "" } = searchParams;
+const filteredPost = SORTED_ALL_POST.filter((post: Post) =>
+  regex.test(String(tag).toLowerCase())
+);
+```
+
+그런데 tag 기능을 활성화 할때마다 설정한 내용으로 들어갈 때 마다 이 O(n) 의 시행을 해야한다. 이건 낭비라고 생각하였다. 어차피 동일한 `tag` 로 요청해도 결과는 동일하기 때문이다. 
+
+<aside>
+📌 **RequestMemoization**
+
+사실, NextJS 는 `tag`를 파라미터로 넣어서 필터링 된 리스트를 리턴하도록 메소드를 만든다면 해결된다. 
+
+NextJS 에서는 **서버사이드 메소드** 요청의 응답 값을 캐싱하는 [RequestMemoization](https://nextjs.org/docs/app/building-your-application/caching#request-memoization) 을 지원한다. 그러므로 동일한 메소드 요청구문에는 `filter` 메소드를 사용하지 않고 응답만 하여 성능을 개선할 수 있다.
+
+다만 `allPosts` 로 다양하게 대응할 수도 있어서 가능한 원본을 활용한 방식을 채택하고자 메소드를 사용하진 않았다.
+
+</aside>
+
+## Map
+
+`get` 메소드가 `O(1)` 인 Map 에 필터된 포스트 배열을 미리 넣어두고 필요할때 사용하도록 만들어 두는게 어떨까 생각을 했다. 특히 Map 은 키 값의 리스트 나열, 이터레이터 등등 활용 방안이 다양하기 때문이다.
+
+```jsx
+const ALL_TAGS : string[] = ["", "blog", "frontend", "javascript", "nextjs", "test"];
+
+const filteredPostMap: [string, Post[]][] = ALL_TAGS.map((tag) => {
+  const regex = new RegExp(tag, "i");
+  const filteredPost = SORTED_ALL_POST.filter((post: Post) =>
+    regex.test(String(post.tag).toLowerCase())
+  );
+  return [tag, filteredPost];
+});
+
+export const FILTERED_POSTS: Map<TAG_UNION, Post[]> = new Map(filteredPostMap);
+
+// ==================== 사용 시 ==============================
+
+const { tag = "" } = searchParams;
+const filteredPosts: Post[] = FILTERED_POSTS.get(tag) ?? [];
+```
+
+일단 여기까지만 해도 컴포넌트에서 `filter` 메소드를 사용하지 않아, 성능을 향상할 수 있을 것이다. 
+
+## as const
+
+tag 에 들어갈 값은 string 타입이지만 `ALL_TAGS` 를 보면 사실상 이미 정해진 값이 있다. 
+
+```jsx
+const ALL_TAGS : string[] = ["", "blog", "frontend", "javascript", "nextjs", "test"];
+```
+
+그런데 `filteredPostMap` 에서 원치 않는 값이 들어갔을지도 모르는 경우를 미연에 방지 해야 한다. 그러므로 `filteredPostMap` 의 키 값은 `ALL_TAGS` 를 기반으로 들어간 `Union` Type 이 들어가야한다. 
+
+```jsx
+const ALL_TAGS : string[] = ["", "blog", "frontend", "javascript", "nextjs", "test"];
+const TAG_UNION= ""|"blog"|"frontend"|"javascript"|"nextjs"|"test"
+export const FILTERED_POSTS: Map<TAG_UNION, Post[]>
+```
+
+그런데 태그를 하나 늘릴 때마다 `TAG_UNION` 과 `ALL_TAGS` 를 똑같이 적용 해야 한다. 역시 array 를 기반으로 Union 을 만들도록 해야한다. 그래서 `TAG_UNION` 을 아래와 같이 정의했다.
+
+```jsx
+const ALL_TAGS = ["", "blog", "frontend", "javascript", "nextjs", "test"] as const;
+export type TAG_UNION = (typeof ALL_TAGS)[number];
+```
+
+참고로 `number` 는 위에서 설정한 변수가 아니다. 타입 스크립트만의 문법으로 `‘어떤 숫자’`를 의미한다. 그러므로 `ALL_TAGS` 배열에 들어있는 타입 들로 `TAG_UNION` 이 무슨 타입을 갖는지 추정하는 구문이다. 
+
+`ALL_TAGS` 의 맨 뒤에 `as const` 가 들어가 있는데 타입 스크립트 5.0 버전에 추가된거로, 해당 변수의 내부 값들은 상수들로 이루어져 있단 뜻이다. 
+
+```jsx
+const ALL_TAGS1 = ["", "blog", "frontend", "javascript", "nextjs", "test"] as const;
+export type TAG_UNION2 = (typeof ALL_TAGS)[number];
+// type TAG_UNION = string
+
+const ALL_TAGS1 = ["", "blog", "frontend", "javascript", "nextjs", "test"];
+export type TAG_UNION2 = (typeof ALL_TAGS)[number];
+// type TAG_UNION = "" | "blog" | "frontend" | "javascript" | "nextjs" | "test"
+```
+
+위 처럼 원하는 대로 union 타입이 만들어졌다. 
+
+덧붙여, 해당 값들은 `readonly` 로 설정되어 특정 타입으로 들어간 값에는 `toLowerCase()` 와 같은 변형을 줄 수 없다.
+
+여기까지 진행하고 나면 특정 태그 값들로만 받을 수 있는 맵을 만들 수 있었다.
+
+```jsx
+import { allPosts, Post } from "contentlayer/generated";
+import { compareDesc } from "date-fns";
+
+export const SORTED_ALL_POST: Post[] = allPosts.sort((a, b) =>
+  compareDesc(new Date(a.date), new Date(b.date))
+);
+
+const ALL_TAGS = ["", "blog", "frontend", "javascript", "nextjs", "test"];
+export type TAG_UNION = (typeof ALL_TAGS)[number];
+
+const filteredPostMap: [TAG_UNION, Post[]][] = ALL_TAGS.map((tag) => {
+  const regex = new RegExp(tag, "i");
+  const filteredPost = SORTED_ALL_POST.filter((post: Post) =>
+    regex.test(String(post.tag).toLowerCase())
+  );
+  return [tag, filteredPost];
+});
+
+export const FILTERED_POSTS: Map<TAG_UNION, Post[]> = new Map(filteredPostMap);
+```
+
+# 싱글톤
+
+이제 선언한 맵인 `FILTERED_POSTS` 는 애플리케이션 전체에서 단 하나 뿐인 정적 값이어야 하고, 새로이 선언되어야 의미를 갖는다. 이러한 기능을 충족하는 구조는 싱글톤이다. 
+
+> 리액트를 다루면서 가끔 전역변수를 다루곤 하는데, 언마운트가 되고난 후 다시 리랜더링이 될때 가장 마지막에 저장하던 상태값을 다시 사용하기 위해서 활용했었다.
+> 
+
+이처럼 싱글톤을 다루려면 전역값으로 설정하고, 인스턴스가 이미 있으면 인스턴스를 리턴하고, 없다면 새로운 인스턴스를 생성하여 애플리케이션에 단 한개만 존재하도록 할 수가 있다.
+
+```jsx
+const singleton = (function () {
+  let instance: any;
+  function init() {
+    return new Map(filteredPostMap);
+  }
+  return {
+    getInstance: function () {
+      if (!instance) {
+        instance = init();
+      }
+      return instance;
+    },
+  };
+})();
+
+export const SINGLETON_POSTS = singleton.getInstance();
+```
+
+```jsx
+// componentA
+
+import { FILTERED_POSTS } from "./allPosts";
+const componentA = () => <CompoentnB posts={FILTERED_POSTS } />
+
+// componentB
+
+import { FILTERED_POSTS } from "./allPosts";
+const componentB = ({posts} : {posts: any}) => {
+	console.log(posts === FILTERED_POSTS) // true
+	return <></>
+}
+export default componentB
+```
+
+동일한 인스턴스를 사용하여 싱글톤으로 구현을 성공했다.
+
+---
+
+다만 꼭 그럴 필요는 없었다. 원래 모듈기능 자체가 재사용하기 수월하게 만들어주기 때문이다..
+
+<aside>
+🔗 **[NodeJS 의 모든 모듈은 캐싱된다](https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/)**
+
+현재 모듈 환경 자체인 NodeJS 런타임 환경에서는 모듈로 선언된 내용들은 파일 이름 단위로 캐싱되므로 아무리 만들어도 성능에 영향이 가지 않도록 한다. 
+
+</aside>
+
+그러므로 export 만 해줘도 위의 콘솔 값의 결과도 동일하게 **`true`** 로 반환되었다.
+
+# 마무리
+
+태그 목록 컴포넌트는 아래처럼 구성을 완료하였다. 맵으로 키 값들의 배열을 기반으로 태그 목록들을 나열하여 완성할 수 있었다.
+
+```jsx
+import { FILTERED_POSTS } from "@/app/blog/allPosts";
+let TAG_ARRAY: { [key: string]: number } = {};
+
+FILTERED_POSTS.forEach((data, index) => {
+  TAG_ARRAY[index] = data.length;
+});
+
+const TagLists = () => {
+	// {...중략}
+	<div className="p-2">
+		{Object.keys(TAG_ARRAY).map((tag) => {
+		  return (
+		    <div key={tag}>
+		      <Link
+		        href={{
+		          pathname: "/blog",
+		          query: {
+		            tag,
+		          },
+		        }}
+		        className={clsx("text-lg w-auto my-1", {
+		          "text-sky-500": tag === paramTag,
+		        })}
+		      >
+		        {tag.length > 0 ? tag : "ALL"} ({TAG_ARRAY[tag]})
+		      </Link>
+		    </div>
+		  );
+		})}
+		</div>
+	// { 후략 }
+}
+```
