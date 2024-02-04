@@ -1,6 +1,14 @@
 import BlogFooter from "@/components/Blog/Footer";
 import BlogHeader from "@/components/Blog/Header";
+import { Viewport } from "next";
 import { ReactNode } from "react";
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+};
 
 export default function BlogLayout({ children }: { children: ReactNode }) {
   return (
