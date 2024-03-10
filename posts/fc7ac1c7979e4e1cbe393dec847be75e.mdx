@@ -1,0 +1,108 @@
+---
+title: 간소한 CI/CD 
+date: 2024-03-10 11:22
+tag: Blog,FrontEnd,Test
+---
+
+> 최근 과제 테스트에서 `빌드가 실패했다`는 충격적인 결과를 받은 적이 있었다. 사실 빌드가 실패하면 배포도 중단되어 운영환경에 영향을 주지는 않지만, 실제로 반영할 다른 내용이 적용 안되므로 문제를 일으키기 충분하다. 
+> 
+
+**아울러 내 개발 성향에 문제가 있음을 어필하는 짓이라 전형 과정에선 그리 좋은 행동은 아니다. 그래서 현재 프로젝트에서 PR과정에는 이하의 테스트를 진행해야하도록 환경을 갖추었고 앞으로의 모든 과제테스트는 이 워크플로우를 대응한다.** 
+
+![Untitled](https://file.notion.so/f/f/b67b8caf-0e30-4e9a-b6db-84175dd949a3/55efd8f5-cff8-4cdb-867f-26620fa32a9e/Untitled.png?id=0bedc273-455a-4245-ae78-78973485cd7c&table=block&spaceId=b67b8caf-0e30-4e9a-b6db-84175dd949a3&expirationTimestamp=1710129600000&signature=zeuF7Ody8Dc6ij-YL8iIMXLvAAQoSinKrn6STCjrqK0&downloadName=Untitled.png)
+
+github 에서는 특정 브랜치로 pr 이나 commit 을 할 때 githubAction 을 통해 빌드, 테스트코드 실행, 도커라이징과 같은 일련의 과정을 실행하도록 설정할 수가 있다. 이를 활용하여, CI 를 보강할 수 있다. 지금까지 과제 테스트를 진행하면서 githubAction 을 어떤 식으로 다뤄보았는지 기록을 남겨본다. 
+
+( 다만 githubAction 에 자세한 내용에 대해서는 추후에 다뤄보기로 한다. )
+
+# 빌드 테스트
+
+`.github/workflows/checkbuilderror.yml` 
+
+```yaml
+name: Check Build Error
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: install dependencies
+        run: npm install -g yarn && yarn
+      - name: build test
+        run: npm run build
+```
+
+빌드에서 문제가 생겼는지 확인하기 위해 적용된 워크 플로우이다. 패키지 설치, 체크아웃 등등의 작업을 하도록 설정하였다. main, master 브랜츠로 merge 를 진행할 PR 에서 위의 절차를 실행하여 빌드 오류를 검출 할 수 있다.
+
+[pr 에서 빌드하는 모습](https://github.com/N3theri9N/amplify-intro/actions/runs/8219036873/job/22476546512?pr=1)을 보면 nextjs 에서 성공적으로 빌드 했을때 페이지 목록에 대한 정보가 터미널에 출력 되었다.
+
+# 테스트 코드 실행
+
+빌드가 실패하는 것 보다 더 주의할 건, 빌드 오류는 그래도 배포를 중단하기 때문에 운영환경에 문제로 이어지진 않는다. 반면에, 빌드에 이상은 없지만 기존에 동작하던 기능이 갑자기 오작동 되는 문제가 일어나는 경우는 운영환경에 영향을 줄 수 있는 문제로 커질 수 있다.
+
+따라서 테스트 코드 실행문을 pr 과정에 대응하면 이러한 문제를 막을 수 있다. 당연하지만 테스트 코드도 부지런히 만들어야 한다. 
+
+경험이 적어서 많이 다뤄보진 못해봤지만 개인적으로 E2E 테스트하기 좋은 환경을 제공하고, 무료로 많이 다룰 수 있고, 크로스 브라우징 이슈도 대응 가능한 **[playwright](https://playwright.dev/)** 를 선호한다. 
+
+```jsx
+npm init playwright@latest
+// or
+yarn create playwright
+```
+
+위 명령어로 **playwright** 를 초기화할 때 action 을 추가할 것인지 질문에 yes 로 답하면 이하의 워크 플로우가 생성된다.
+
+`.github/workflows/playwright.yml`
+
+```yaml
+name: Playwright Tests
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm install -g yarn && yarn
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+      - name: Run Playwright tests
+        run: yarn playwright test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+```
+
+`yarn playwright test` 가 적혀있듯이 playwright 로 정의한 테스트 코드가 전부 실행한다.
+
+주의할 점은 별다른 설정을 하지 않았다면, 성공/실패 여부만 알려주지 빌드 과정에 오류가 일어나지 않는 이상 실패한 테스트가 있어도 이는 경고로 전달되지 오류로 인식하지 않는다는 점이다.
+
+[pr 에서 테스트 코드가 실행하는 모습](https://github.com/N3theri9N/amplify-intro/actions/runs/8219145415/job/22476783364?pr=1)
+
+# 배포 환경 연동 ( TODO )
+
+CI/CD 중에서 CD 과정의 연장선으로 github 에서 pr 이 동작하려 할 때 배포 환경에 미리 배포하여 오류가 있었는지 아닌지 확인하는 절차를 적용할 수 있다.
+
+작성자는 **vercel** 에 블로그를 운영하고 있는데 해당 플랫폼에서는 연동된 github repository 에 자동적으로 CD 기능을 제공해준다. 그러므로 워크플로우 설정을 하지 않아도 빌드나 배포 오류를 확인해준다. 이러한 기능 제공이 vercel 로 운영하는데 진입장벽을 낮춰주는 점은 좋다. 
+
+Netlify, EC2 와 같은 빌드 환경일 경우에도 사실 레포지토리가 연동되니만큼 pr 이 일어나면 테스트로 배포하는 기능은 들어있는데, github action 으로 보려면 해당 플랫폼의 credential 을 가지고 있어야지 빌드 결과를 보는 식으로 적용할 수 있다고 한다. 관련 작업을 할 기회가 생기면 다시 다뤄보기로 한다.
